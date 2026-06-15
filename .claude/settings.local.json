@@ -42,7 +42,13 @@
       "Bash(curl -s -o /tmp/auth-bundle.out -w 'BUNDLE: HTTP %{http_code} | %{size_download} bytes | %{time_total}s\\\\n' --max-time 240 \"http://localhost:8081/index.bundle?platform=ios&dev=true&minify=false\")",
       "Bash(echo \"errors: $\\(npm run typecheck 2>&1)",
       "Bash(echo \"metro pid $!\")",
-      "Bash(curl -s -o /tmp/input-bundle.out -w 'BUNDLE: HTTP %{http_code} | %{size_download} bytes | %{time_total}s\\\\n' --max-time 240 \"http://localhost:8081/index.bundle?platform=ios&dev=true&minify=false\")"
+      "Bash(curl -s -o /tmp/input-bundle.out -w 'BUNDLE: HTTP %{http_code} | %{size_download} bytes | %{time_total}s\\\\n' --max-time 240 \"http://localhost:8081/index.bundle?platform=ios&dev=true&minify=false\")",
+      "Bash(node -p \"require\\('./node_modules/expo-location/package.json'\\).version\")",
+      "Bash(echo \"YES \\($\\(node -p \"require\\('./node_modules/expo-location/package.json'\\).version\" \\)\\)\")",
+      "Bash(git checkout *)",
+      "Bash(curl -s -o /tmp/home-bundle.out -w 'BUNDLE: HTTP %{http_code} | %{size_download} bytes | %{time_total}s\\\\n' --max-time 240 \"http://localhost:8081/index.bundle?platform=ios&dev=true&minify=false\")",
+      "Bash(git -C /Users/alexvirdee/Desktop/alexdev/react-native/sprout-mobile branch --show-current)",
+      "Bash(echo \"branch: $\\(git -C /Users/alexvirdee/Desktop/alexdev/react-native/sprout-mobile branch --show-current\\)\")"
     ]
   }
 }

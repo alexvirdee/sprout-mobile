@@ -28,7 +28,16 @@
       "bundler": "metro",
       "favicon": "./assets/favicon.png"
     },
-    "plugins": ["expo-font", "expo-secure-store"],
+    "plugins": [
+      "expo-font",
+      "expo-secure-store",
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "Sprout uses your location to show local weather and gardening care suggestions."
+        }
+      ]
+    ],
     "extra": {
       "apiBaseUrl": "http://localhost:4000/api",
       "googleOAuth": {
