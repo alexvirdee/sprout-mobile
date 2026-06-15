@@ -17,7 +17,7 @@ export type AppTabParamList = {
   Home: undefined;
   Garden: NavigatorScreenParams<GardensStackParamList> | undefined;
   Water: NavigatorScreenParams<WateringStackParamList> | undefined;
-  You: undefined;
+  You: NavigatorScreenParams<ProfileStackParamList> | undefined;
 };
 
 export type AuthStackScreenProps<T extends keyof AuthStackParamList> = NativeStackScreenProps<
@@ -53,6 +53,19 @@ export type WateringStackParamList = {
 
 export type WateringStackScreenProps<T extends keyof WateringStackParamList> = CompositeScreenProps<
   NativeStackScreenProps<WateringStackParamList, T>,
+  AppTabScreenProps<keyof AppTabParamList>
+>;
+
+export type ProfileStackParamList = {
+  ProfileHome: { flash?: string } | undefined;
+  EditProfile: undefined;
+  Achievements: undefined;
+  Preferences: undefined;
+  About: undefined;
+};
+
+export type ProfileStackScreenProps<T extends keyof ProfileStackParamList> = CompositeScreenProps<
+  NativeStackScreenProps<ProfileStackParamList, T>,
   AppTabScreenProps<keyof AppTabParamList>
 >;
 
