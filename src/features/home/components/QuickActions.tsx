@@ -1,6 +1,6 @@
 /**
- * QuickActions — playful 2×2 grid of common actions. "Add garden" is wired;
- * the rest are Phase-2 placeholders that show a friendly "coming soon" message.
+ * QuickActions — playful 2×2 grid of common actions. Add garden, add plant, and
+ * water are wired to their destinations; "Add note" is a Phase-2 placeholder.
  */
 
 import React from 'react';
@@ -13,14 +13,15 @@ import { colors, palette, radii, shadows } from '@theme/index';
 export interface QuickActionsProps {
   onAddGarden: () => void;
   onAddPlant: () => void;
+  onWater: () => void;
   onComingSoon: (label: string) => void;
 }
 
-export function QuickActions({ onAddGarden, onAddPlant, onComingSoon }: QuickActionsProps) {
+export function QuickActions({ onAddGarden, onAddPlant, onWater, onComingSoon }: QuickActionsProps) {
   const actions = [
     { key: 'garden', label: 'Add garden', icon: <Plus size={20} color={palette.green[700]} />, soft: palette.green[50], onPress: onAddGarden },
     { key: 'plant', label: 'Add plant', icon: <Sprout size={20} color={palette.sageScale[700]} />, soft: palette.sageScale[50], onPress: onAddPlant },
-    { key: 'water', label: 'Log watering', icon: <Droplets size={20} color={palette.terra[600]} />, soft: palette.terra[50], onPress: () => onComingSoon('Watering log') },
+    { key: 'water', label: 'Water', icon: <Droplets size={20} color={palette.terra[600]} />, soft: palette.terra[50], onPress: onWater },
     { key: 'note', label: 'Add note', icon: <Pencil size={20} color={palette.gold[700]} />, soft: palette.gold[50], onPress: () => onComingSoon('Notes') },
   ];
 

@@ -26,3 +26,14 @@ export function relativeDay(target: string | Date, now: Date = new Date()): stri
   if (days > 1) return `In ${days} days`;
   return `${Math.abs(days)} days ago`;
 }
+
+/** A compact relative time: "Just now", "5m ago", "2h ago", else the day label. */
+export function relativeTime(target: string | Date, now: Date = new Date()): string {
+  const d = typeof target === 'string' ? new Date(target) : target;
+  const mins = Math.floor((now.getTime() - d.getTime()) / 60_000);
+  if (mins < 1) return 'Just now';
+  if (mins < 60) return `${mins}m ago`;
+  const hrs = Math.floor(mins / 60);
+  if (hrs < 24 && d.getDate() === now.getDate()) return `${hrs}h ago`;
+  return relativeDay(d, now);
+}

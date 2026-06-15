@@ -16,7 +16,7 @@ export type AuthStackParamList = {
 export type AppTabParamList = {
   Home: undefined;
   Garden: NavigatorScreenParams<GardensStackParamList> | undefined;
-  Water: undefined;
+  Water: NavigatorScreenParams<WateringStackParamList> | undefined;
   You: undefined;
 };
 
@@ -40,9 +40,20 @@ export type GardensStackParamList = {
   EditPlant: { id: string };
 };
 
-export type GardensStackScreenProps<T extends keyof GardensStackParamList> = NativeStackScreenProps<
-  GardensStackParamList,
-  T
+export type GardensStackScreenProps<T extends keyof GardensStackParamList> = CompositeScreenProps<
+  NativeStackScreenProps<GardensStackParamList, T>,
+  AppTabScreenProps<keyof AppTabParamList>
+>;
+
+export type WateringStackParamList = {
+  WateringHome: undefined;
+  WateringHistory: undefined;
+  LogWatering: { gardenId: string };
+};
+
+export type WateringStackScreenProps<T extends keyof WateringStackParamList> = CompositeScreenProps<
+  NativeStackScreenProps<WateringStackParamList, T>,
+  AppTabScreenProps<keyof AppTabParamList>
 >;
 
 declare global {
