@@ -16,6 +16,7 @@ module.exports = {
     '^@hooks/(.*)$': '<rootDir>/src/hooks/$1',
     '^@theme/(.*)$': '<rootDir>/src/theme/$1',
     '^@components/(.*)$': '<rootDir>/src/components/$1',
+    '^@features/(.*)$': '<rootDir>/src/features/$1',
     '^expo-secure-store$': '<rootDir>/src/__tests__/mocks/expo-secure-store.ts',
     '^expo-constants$': '<rootDir>/src/__tests__/mocks/expo-constants.ts',
   },
