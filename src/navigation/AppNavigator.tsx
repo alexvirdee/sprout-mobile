@@ -1,8 +1,7 @@
 /**
  * AppNavigator — the signed-in experience: a frosted bottom tab bar over the
- * warm page. Home, Garden, and You are built; Water is scaffolded with a
- * friendly "coming soon" state (Phase 2). The Garden tab hosts its own stack
- * (list → detail → create/edit) and hides the tab bar on the sub-screens.
+ * warm page. Home, Garden, Water, and You are all built. The Garden and Water
+ * tabs each host their own stack and hide the tab bar on their sub-screens.
  */
 
 import React from 'react';
@@ -16,19 +15,9 @@ import { AppTabParamList } from '@app-types/navigation';
 import { HomeScreen } from '@features/home/screens/HomeScreen';
 import { ProfileScreen } from '@screens/profile/ProfileScreen';
 import { GardensNavigator } from './GardensNavigator';
-import { ComingSoonScreen } from '@screens/ComingSoonScreen';
+import { WateringNavigator } from './WateringNavigator';
 
 const Tab = createBottomTabNavigator<AppTabParamList>();
-
-function WaterTab() {
-  return (
-    <ComingSoonScreen
-      icon="💧"
-      title="Watering"
-      message="A weather-aware watering schedule is on the way — we'll nudge you before the heat of the day."
-    />
-  );
-}
 
 export function AppNavigator() {
   return (
@@ -62,9 +51,13 @@ export function AppNavigator() {
       />
       <Tab.Screen
         name="Water"
-        component={WaterTab}
-        options={{
-          tabBarIcon: ({ color, focused }) => <Droplet size={23} color={color} strokeWidth={focused ? 2.4 : 2} />,
+        component={WateringNavigator}
+        options={({ route }) => {
+          const focusedRoute = getFocusedRouteNameFromRoute(route) ?? 'WateringHome';
+          return {
+            tabBarIcon: ({ color, focused }) => <Droplet size={23} color={color} strokeWidth={focused ? 2.4 : 2} />,
+            tabBarStyle: focusedRoute === 'WateringHome' ? styles.tabBar : { display: 'none' },
+          };
         }}
       />
       <Tab.Screen
