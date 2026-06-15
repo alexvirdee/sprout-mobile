@@ -12,13 +12,14 @@ import { colors, palette, radii, shadows } from '@theme/index';
 
 export interface QuickActionsProps {
   onAddGarden: () => void;
+  onAddPlant: () => void;
   onComingSoon: (label: string) => void;
 }
 
-export function QuickActions({ onAddGarden, onComingSoon }: QuickActionsProps) {
+export function QuickActions({ onAddGarden, onAddPlant, onComingSoon }: QuickActionsProps) {
   const actions = [
     { key: 'garden', label: 'Add garden', icon: <Plus size={20} color={palette.green[700]} />, soft: palette.green[50], onPress: onAddGarden },
-    { key: 'plant', label: 'Add plant', icon: <Sprout size={20} color={palette.sageScale[700]} />, soft: palette.sageScale[50], onPress: () => onComingSoon('Plants') },
+    { key: 'plant', label: 'Add plant', icon: <Sprout size={20} color={palette.sageScale[700]} />, soft: palette.sageScale[50], onPress: onAddPlant },
     { key: 'water', label: 'Log watering', icon: <Droplets size={20} color={palette.terra[600]} />, soft: palette.terra[50], onPress: () => onComingSoon('Watering log') },
     { key: 'note', label: 'Add note', icon: <Pencil size={20} color={palette.gold[700]} />, soft: palette.gold[50], onPress: () => onComingSoon('Notes') },
   ];

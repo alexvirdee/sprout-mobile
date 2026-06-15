@@ -9,7 +9,7 @@ import { Alert, Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Archive, ArrowLeft, MapPin, Plus, SquarePen } from 'lucide-react-native';
+import { Archive, ArrowLeft, MapPin, SquarePen } from 'lucide-react-native';
 
 import {
   Badge,
@@ -18,6 +18,7 @@ import {
   Emoji,
   IconButton,
   SectionHeader,
+  Skeleton,
   Spinner,
   Text,
 } from '@components/index';
@@ -33,6 +34,10 @@ import {
   sizeSummary,
   sunExposureMeta,
 } from '../types/garden.types';
+import { usePlants } from '@features/plants/hooks/usePlants';
+import { PlantCard } from '@features/plants/components/PlantCard';
+import { PlantEmptyState } from '@features/plants/components/PlantEmptyState';
+import { QuickAddPlantModal } from '@features/plants/components/QuickAddPlantModal';
 
 const PHASE_2 = [
   { emoji: '🛏️', label: 'Plant beds' },
@@ -48,6 +53,9 @@ export function GardenDetailScreen({ navigation, route }: GardensStackScreenProp
   const insets = useSafeAreaInsets();
   const { data: garden, isLoading, isError } = useGarden(id);
   const archive = useArchiveGarden();
+  const plantsQuery = usePlants(id);
+  const plants = plantsQuery.data ?? [];
+  const [quickAdd, setQuickAdd] = useState(false);
   const [flash, setFlash] = useState<string | undefined>(route.params?.flash);
 
   useEffect(() => {
@@ -162,20 +170,27 @@ export function GardenDetailScreen({ navigation, route }: GardensStackScreenProp
 
           {/* Plants */}
           <View style={styles.section}>
-            <SectionHeader title="Plants" />
-            <Placeholder
-              emoji="🌱"
-              title="No plants yet"
-              body="Add your first plant to start tracking growth, watering, and harvests."
-              action={
-                <Button
-                  label="Add first plant"
-                  variant="secondary"
-                  iconLeft={<Plus size={18} color={palette.green[700]} />}
-                  onPress={() => comingSoon('Plants')}
-                />
-              }
+            <SectionHeader
+              title="Plants in this garden"
+              actionLabel={plants.length ? 'Add plant' : undefined}
+              onActionPress={plants.length ? () => setQuickAdd(true) : undefined}
             />
+            {plantsQuery.isLoading ? (
+              <Skeleton height={96} radius={radii.lg} />
+            ) : plants.length === 0 ? (
+              <PlantEmptyState
+                title="Nothing planted yet"
+                body="Add your first plant so Sprout can help track watering, notes, and growth."
+                ctaLabel="Add plant"
+                onCta={() => setQuickAdd(true)}
+              />
+            ) : (
+              <View style={styles.plantList}>
+                {plants.map((p) => (
+                  <PlantCard key={p.id} plant={p} onPress={() => navigation.navigate('PlantDetail', { id: p.id })} />
+                ))}
+              </View>
+            )}
           </View>
 
           {/* Today's care */}
@@ -236,6 +251,23 @@ export function GardenDetailScreen({ navigation, route }: GardensStackScreenProp
           </View>
         </ScrollView>
       )}
+
+      {garden ? (
+        <QuickAddPlantModal
+          visible={quickAdd}
+          gardenId={garden.id}
+          gardenName={garden.name}
+          onClose={() => setQuickAdd(false)}
+          onAdded={() => {
+            setQuickAdd(false);
+            setFlash('Plant added 🌱');
+          }}
+          onAddDetails={(name) => {
+            setQuickAdd(false);
+            navigation.navigate('AddPlant', { gardenId: garden.id, name });
+          }}
+        />
+      ) : null}
     </View>
   );
 }
@@ -308,6 +340,7 @@ const styles = StyleSheet.create({
   loc: { flexDirection: 'row', alignItems: 'center', columnGap: 5 },
 
   section: { marginTop: spacing.xl },
+  plantList: { rowGap: spacing.base },
   overviewRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingVertical: 14 },
   sunValue: { flexDirection: 'row', alignItems: 'center', columnGap: 6 },
   divider: { height: 1, backgroundColor: colors.border.soft, marginHorizontal: 16 },
