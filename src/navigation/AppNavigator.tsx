@@ -13,7 +13,7 @@ import { Home, Sprout, Droplet, User } from 'lucide-react-native';
 
 import { colors, palette } from '@theme/index';
 import { AppTabParamList } from '@app-types/navigation';
-import { DashboardScreen } from '@screens/home/DashboardScreen';
+import { HomeScreen } from '@features/home/screens/HomeScreen';
 import { ProfileScreen } from '@screens/profile/ProfileScreen';
 import { GardensNavigator } from './GardensNavigator';
 import { ComingSoonScreen } from '@screens/ComingSoonScreen';
@@ -44,7 +44,7 @@ export function AppNavigator() {
     >
       <Tab.Screen
         name="Home"
-        component={DashboardScreen}
+        component={HomeScreen}
         options={{
           tabBarIcon: ({ color, focused }) => <Home size={23} color={color} strokeWidth={focused ? 2.4 : 2} />,
         }}
