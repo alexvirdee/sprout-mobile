@@ -9,7 +9,7 @@ import { Alert, Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Archive, ArrowLeft, MapPin, SquarePen } from 'lucide-react-native';
+import { Archive, ArrowLeft, Droplet, MapPin, SquarePen } from 'lucide-react-native';
 
 import {
   Badge,
@@ -41,7 +41,6 @@ import { QuickAddPlantModal } from '@features/plants/components/QuickAddPlantMod
 
 const PHASE_2 = [
   { emoji: '🛏️', label: 'Plant beds' },
-  { emoji: '💧', label: 'Watering schedule' },
   { emoji: '🧺', label: 'Harvests' },
   { emoji: '📸', label: 'Photos' },
   { emoji: '🌦️', label: 'Weather & frost' },
@@ -145,6 +144,14 @@ export function GardenDetailScreen({ navigation, route }: GardensStackScreenProp
           </View>
 
           <GardenStatsCard garden={garden} />
+
+          <Button
+            label="Water this garden"
+            fullWidth
+            iconLeft={<Droplet size={18} color={colors.text.onBrand} fill={colors.text.onBrand} />}
+            onPress={() => navigation.navigate('Water', { screen: 'LogWatering', params: { gardenId: id } })}
+            style={styles.waterCta}
+          />
 
           {/* Overview */}
           <View style={styles.section}>
@@ -332,6 +339,7 @@ const styles = StyleSheet.create({
   notFoundMsg: { marginTop: 6 },
   notFoundBtn: { marginTop: spacing.lg },
   flash: { marginBottom: spacing.base },
+  waterCta: { marginTop: spacing.lg },
 
   identity: { alignItems: 'center', paddingTop: spacing.sm, paddingBottom: spacing.lg },
   disc: { width: 72, height: 72, borderRadius: radii.lg, alignItems: 'center', justifyContent: 'center', ...shadows.sm },

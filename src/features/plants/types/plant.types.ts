@@ -28,6 +28,8 @@ export interface Plant {
   wateringPreference: WateringPreference;
   notes?: string;
   status: PlantStatus;
+  lastWateredAt?: string | null;
+  wateringCount?: number;
   archivedAt?: string | null;
   createdAt: string;
   updatedAt: string;
