@@ -16,7 +16,7 @@ const extra = (Constants.expoConfig?.extra ?? {}) as {
 
 export const env = {
   apiBaseUrl:
-    process.env.EXPO_PUBLIC_API_BASE_URL ?? extra.apiBaseUrl ?? 'http://localhost:4000/api',
+    process.env.EXPO_PUBLIC_API_URL ?? extra.apiBaseUrl ?? 'http://localhost:4000/api',
 
   google: {
     iosClientId:

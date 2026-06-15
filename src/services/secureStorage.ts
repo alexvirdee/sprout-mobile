@@ -1,33 +1,20 @@
 /**
- * Token storage backed by expo-secure-store (Keychain / Keystore). Never store
- * JWTs in AsyncStorage — they belong in the secure enclave.
+ * Token storage backed by expo-secure-store (Keychain / Keystore). A single
+ * session JWT lives here — never in AsyncStorage.
  */
 
 import * as SecureStore from 'expo-secure-store';
 
-import { AuthTokens } from '@app-types/api';
+const TOKEN_KEY = 'sprout.token';
 
-const ACCESS_KEY = 'sprout.accessToken';
-const REFRESH_KEY = 'sprout.refreshToken';
-
-export async function getAccessToken(): Promise<string | null> {
-  return SecureStore.getItemAsync(ACCESS_KEY);
+export async function getToken(): Promise<string | null> {
+  return SecureStore.getItemAsync(TOKEN_KEY);
 }
 
-export async function getRefreshToken(): Promise<string | null> {
-  return SecureStore.getItemAsync(REFRESH_KEY);
+export async function setToken(token: string): Promise<void> {
+  await SecureStore.setItemAsync(TOKEN_KEY, token);
 }
 
-export async function setTokens(tokens: AuthTokens): Promise<void> {
-  await Promise.all([
-    SecureStore.setItemAsync(ACCESS_KEY, tokens.accessToken),
-    SecureStore.setItemAsync(REFRESH_KEY, tokens.refreshToken),
-  ]);
-}
-
-export async function clearTokens(): Promise<void> {
-  await Promise.all([
-    SecureStore.deleteItemAsync(ACCESS_KEY),
-    SecureStore.deleteItemAsync(REFRESH_KEY),
-  ]);
+export async function clearToken(): Promise<void> {
+  await SecureStore.deleteItemAsync(TOKEN_KEY);
 }

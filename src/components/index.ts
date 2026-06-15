@@ -6,6 +6,8 @@
 // Core UI
 export { Text } from './ui/Text';
 export type { TextProps } from './ui/Text';
+export { Emoji } from './ui/Emoji';
+export type { EmojiProps } from './ui/Emoji';
 export { Button } from './ui/Button';
 export type { ButtonProps } from './ui/Button';
 export { IconButton } from './ui/IconButton';
@@ -16,8 +18,10 @@ export { Badge } from './ui/Badge';
 export type { BadgeProps, BadgeTone } from './ui/Badge';
 export { Avatar } from './ui/Avatar';
 export type { AvatarProps } from './ui/Avatar';
-export { Input } from './ui/Input';
-export type { InputProps } from './ui/Input';
+export { AppTextInput, AppTextInput as Input } from './ui/AppTextInput';
+export type { AppTextInputProps, AppTextInputProps as InputProps } from './ui/AppTextInput';
+export { FormTextInput } from './form/FormTextInput';
+export type { FormTextInputProps } from './form/FormTextInput';
 export { Checkbox } from './ui/Checkbox';
 export type { CheckboxProps } from './ui/Checkbox';
 export { Switch } from './ui/Switch';
@@ -44,6 +48,8 @@ export type { SkeletonProps } from './feedback/LoadingState';
 // Layout
 export { ScreenContainer } from './layout/ScreenContainer';
 export type { ScreenContainerProps } from './layout/ScreenContainer';
+export { KeyboardAwareScreen } from './layout/KeyboardAwareScreen';
+export type { KeyboardAwareScreenProps } from './layout/KeyboardAwareScreen';
 export { SectionHeader } from './layout/SectionHeader';
 export type { SectionHeaderProps } from './layout/SectionHeader';
 export { GradientBackground } from './layout/GradientBackground';

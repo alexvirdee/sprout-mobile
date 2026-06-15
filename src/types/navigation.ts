@@ -30,6 +30,18 @@ export type AppTabScreenProps<T extends keyof AppTabParamList> = CompositeScreen
   NativeStackScreenProps<AuthStackParamList>
 >;
 
+export type GardensStackParamList = {
+  GardensList: { flash?: string } | undefined;
+  GardenDetail: { id: string; flash?: string };
+  CreateGarden: undefined;
+  EditGarden: { id: string };
+};
+
+export type GardensStackScreenProps<T extends keyof GardensStackParamList> = NativeStackScreenProps<
+  GardensStackParamList,
+  T
+>;
+
 declare global {
   // eslint-disable-next-line @typescript-eslint/no-namespace
   namespace ReactNavigation {

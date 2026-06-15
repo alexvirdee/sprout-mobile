@@ -21,6 +21,8 @@ export const queryClient = new QueryClient({
 
 export const queryKeys = {
   dashboard: ['dashboard'] as const,
+  gardens: ['gardens'] as const,
+  garden: (id: string) => ['gardens', id] as const,
   plants: ['plants'] as const,
   plant: (id: string) => ['plants', id] as const,
   tasks: ['tasks'] as const,

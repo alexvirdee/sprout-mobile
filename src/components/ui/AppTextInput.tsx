@@ -1,27 +1,29 @@
 /**
- * Input — labelled text field with optional leading icon, hint, error, and a
- * password visibility toggle. Designed to drop into react-hook-form via a
- * Controller (pass value / onChangeText / onBlur).
+ * AppTextInput — the one text field primitive for the whole app.
+ *
+ * Reliability features (the reasons inputs used to flake on iOS / Expo Go):
+ *  - The ENTIRE field (label-row padding + leading icon + text) is a focus
+ *    target: a Pressable focuses the inner TextInput, so a tap anywhere lands.
+ *    The TextInput still receives direct taps, and the password toggle keeps its
+ *    own; nothing is intercepted.
+ *  - Stable identity (top-level component, controlled value) → never remounts,
+ *    so focus is never dropped by a parent re-render.
+ *  - First-class `multiline` support (notes), top-aligned and growing.
+ *  - `forwardRef` to the TextInput so screens can chain focus (returnKeyType).
  */
 
-import React, { forwardRef, useState } from 'react';
-import {
-  Pressable,
-  StyleSheet,
-  TextInput,
-  TextInputProps,
-  View,
-  ViewStyle,
-} from 'react-native';
+import React, { forwardRef, useMemo, useRef, useState } from 'react';
+import { Pressable, StyleSheet, TextInput, TextInputProps, View, ViewStyle } from 'react-native';
 import { Eye, EyeOff } from 'lucide-react-native';
 
 import { colors, palette, radii } from '@theme/index';
+import { mergeRefs } from '@utils/mergeRefs';
 import { Text } from './Text';
 
 type Size = 'sm' | 'md' | 'lg';
 const HEIGHTS: Record<Size, number> = { sm: 40, md: 48, lg: 56 };
 
-export interface InputProps extends Omit<TextInputProps, 'style'> {
+export interface AppTextInputProps extends Omit<TextInputProps, 'style'> {
   label?: string;
   hint?: string;
   error?: string;
@@ -32,7 +34,7 @@ export interface InputProps extends Omit<TextInputProps, 'style'> {
   containerStyle?: ViewStyle;
 }
 
-export const Input = forwardRef<TextInput, InputProps>(function Input(
+export const AppTextInput = forwardRef<TextInput, AppTextInputProps>(function AppTextInput(
   {
     label,
     hint,
@@ -41,6 +43,7 @@ export const Input = forwardRef<TextInput, InputProps>(function Input(
     size = 'md',
     passwordToggle = false,
     secureTextEntry,
+    multiline,
     containerStyle,
     onFocus,
     onBlur,
@@ -48,9 +51,14 @@ export const Input = forwardRef<TextInput, InputProps>(function Input(
   },
   ref
 ) {
+  const innerRef = useRef<TextInput | null>(null);
   const [focused, setFocused] = useState(false);
   const [hidden, setHidden] = useState(!!secureTextEntry);
-  const h = HEIGHTS[size];
+
+  // Expose the TextInput to parents (focus chaining) while keeping an internal
+  // ref for tap-to-focus. Memoized so the ref callback identity is stable across
+  // re-renders (no detach/reattach churn).
+  const setRefs = useMemo(() => mergeRefs<TextInput>(ref, innerRef), [ref]);
 
   const borderColor = error
     ? colors.status.danger
@@ -66,18 +74,25 @@ export const Input = forwardRef<TextInput, InputProps>(function Input(
         </Text>
       ) : null}
 
-      <View
+      <Pressable
+        // Tap anywhere in the field → focus the input. The TextInput and the
+        // password toggle still handle their own taps; this only catches the
+        // padding / icon "dead zones" that used to require a precise tap.
+        onPress={() => innerRef.current?.focus()}
         style={[
           styles.field,
-          { height: h, borderColor },
+          multiline ? styles.fieldMultiline : null,
+          { minHeight: multiline ? 96 : HEIGHTS[size], borderColor },
           focused && styles.fieldFocused,
         ]}
       >
-        {iconLeft ? <View style={styles.icon}>{iconLeft}</View> : null}
+        {iconLeft ? <View style={[styles.icon, multiline && styles.iconTop]}>{iconLeft}</View> : null}
         <TextInput
-          ref={ref}
-          style={styles.input}
+          ref={setRefs}
+          style={[styles.input, multiline && styles.inputMultiline]}
           placeholderTextColor={colors.text.subtle}
+          selectionColor={palette.green[500]}
+          multiline={multiline}
           secureTextEntry={passwordToggle ? hidden : secureTextEntry}
           onFocus={(e) => {
             setFocused(true);
@@ -94,7 +109,7 @@ export const Input = forwardRef<TextInput, InputProps>(function Input(
             accessibilityRole="button"
             accessibilityLabel={hidden ? 'Show password' : 'Hide password'}
             onPress={() => setHidden((v) => !v)}
-            hitSlop={8}
+            hitSlop={10}
           >
             {hidden ? (
               <EyeOff size={20} color={colors.text.subtle} />
@@ -103,7 +118,7 @@ export const Input = forwardRef<TextInput, InputProps>(function Input(
             )}
           </Pressable>
         ) : null}
-      </View>
+      </Pressable>
 
       {error || hint ? (
         <Text variant="caption" color={error ? 'danger' : 'muted'}>
@@ -125,6 +140,7 @@ const styles = StyleSheet.create({
     borderWidth: 1.5,
     borderRadius: radii.md,
   },
+  fieldMultiline: { alignItems: 'flex-start', paddingVertical: 12 },
   fieldFocused: {
     // soft green focus ring approximation
     shadowColor: palette.green[400],
@@ -134,6 +150,7 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   icon: { alignItems: 'center', justifyContent: 'center' },
+  iconTop: { paddingTop: 2 },
   input: {
     flex: 1,
     fontFamily: 'HankenGrotesk_400Regular',
@@ -141,4 +158,5 @@ const styles = StyleSheet.create({
     color: colors.text.strong,
     paddingVertical: 0,
   },
+  inputMultiline: { paddingTop: 1, textAlignVertical: 'top' },
 });

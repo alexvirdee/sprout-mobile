@@ -14,7 +14,7 @@ type Size = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 const SIZES: Record<Size, number> = { xs: 28, sm: 36, md: 46, lg: 60, xl: 80 };
 
 export interface AvatarProps {
-  source?: string;
+  source?: string | null;
   name?: string;
   size?: Size;
   ring?: boolean;
@@ -52,7 +52,7 @@ export function Avatar({ source, name = '', size = 'md', ring = false }: AvatarP
       {source ? (
         <Image source={{ uri: source }} style={{ width: '100%', height: '100%' }} resizeMode="cover" />
       ) : (
-        <Text variant="title" tint={palette.sageScale[900]} style={{ fontSize: d * 0.38 }}>
+        <Text variant="title" tint={palette.sageScale[900]} style={{ fontSize: d * 0.38, lineHeight: d * 0.46 }}>
           {initials || '🌱'}
         </Text>
       )}

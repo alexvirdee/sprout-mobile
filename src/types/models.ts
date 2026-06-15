@@ -1,9 +1,9 @@
 /**
  * Domain models — mirror the backend Mongoose schemas so the same shapes flow
- * from API → store → UI. Keep in sync with /server/src/models.
+ * from API → store → UI. Keep in sync with /sprout-server/src/models.
  */
 
-export type AuthProvider = 'local' | 'google';
+export type AuthProvider = 'credentials' | 'google';
 
 export type PlantStatus = 'thriving' | 'water' | 'harvest' | 'resting';
 
@@ -13,9 +13,10 @@ export interface User {
   id: string;
   name: string;
   email: string;
-  avatar?: string;
+  avatar?: string | null;
   authProvider: AuthProvider;
   createdAt: string;
+  updatedAt?: string;
 }
 
 export interface Garden {

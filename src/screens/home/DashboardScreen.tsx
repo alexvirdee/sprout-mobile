@@ -16,6 +16,7 @@ import {
   Badge,
   Card,
   Checkbox,
+  Emoji,
   PlantCard,
   ProgressRing,
   SectionHeader,
@@ -117,7 +118,7 @@ export function DashboardScreen({ navigation }: AppTabScreenProps<'Home'>) {
 
 /* ----------------------------- sections ----------------------------- */
 
-function Header({ name, avatar, topInset }: { name: string; avatar?: string; topInset: number }) {
+function Header({ name, avatar, topInset }: { name: string; avatar?: string | null; topInset: number }) {
   return (
     <LinearGradient
       colors={gradients.dawn.colors}
@@ -209,7 +210,7 @@ function HarvestRow({ data }: { data: DashboardData }) {
       {data.recentHarvests.map((h) => (
         <View key={h.id} style={styles.harvestCard}>
           <View style={styles.harvestDisc}>
-            <Text style={{ fontSize: 26 }}>{h.emoji}</Text>
+            <Emoji size={26}>{h.emoji}</Emoji>
           </View>
           <Text variant="label" color="strong" numberOfLines={1}>
             {h.name}

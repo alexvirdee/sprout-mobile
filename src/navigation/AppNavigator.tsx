@@ -1,30 +1,24 @@
 /**
  * AppNavigator — the signed-in experience: a frosted bottom tab bar over the
- * warm page. Home is fully built; Garden / Water / You are scaffolded with
- * friendly "coming soon" states (Phase 2).
+ * warm page. Home, Garden, and You are built; Water is scaffolded with a
+ * friendly "coming soon" state (Phase 2). The Garden tab hosts its own stack
+ * (list → detail → create/edit) and hides the tab bar on the sub-screens.
  */
 
 import React from 'react';
 import { Platform, StyleSheet } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { getFocusedRouteNameFromRoute } from '@react-navigation/native';
 import { Home, Sprout, Droplet, User } from 'lucide-react-native';
 
 import { colors, palette } from '@theme/index';
 import { AppTabParamList } from '@app-types/navigation';
 import { DashboardScreen } from '@screens/home/DashboardScreen';
+import { ProfileScreen } from '@screens/profile/ProfileScreen';
+import { GardensNavigator } from './GardensNavigator';
 import { ComingSoonScreen } from '@screens/ComingSoonScreen';
 
 const Tab = createBottomTabNavigator<AppTabParamList>();
-
-function GardenTab() {
-  return (
-    <ComingSoonScreen
-      icon="🪴"
-      title="My garden"
-      message="Your beds, plant grid, and growth timelines live here. We're tending to it for the next release."
-    />
-  );
-}
 
 function WaterTab() {
   return (
@@ -32,17 +26,6 @@ function WaterTab() {
       icon="💧"
       title="Watering"
       message="A weather-aware watering schedule is on the way — we'll nudge you before the heat of the day."
-    />
-  );
-}
-
-function YouTab() {
-  return (
-    <ComingSoonScreen
-      icon="🌻"
-      title="You"
-      message="Your profile, streaks, and achievement badges will bloom here soon."
-      showSignOut
     />
   );
 }
@@ -68,9 +51,13 @@ export function AppNavigator() {
       />
       <Tab.Screen
         name="Garden"
-        component={GardenTab}
-        options={{
-          tabBarIcon: ({ color, focused }) => <Sprout size={23} color={color} strokeWidth={focused ? 2.4 : 2} />,
+        component={GardensNavigator}
+        options={({ route }) => {
+          const focusedRoute = getFocusedRouteNameFromRoute(route) ?? 'GardensList';
+          return {
+            tabBarIcon: ({ color, focused }) => <Sprout size={23} color={color} strokeWidth={focused ? 2.4 : 2} />,
+            tabBarStyle: focusedRoute === 'GardensList' ? styles.tabBar : { display: 'none' },
+          };
         }}
       />
       <Tab.Screen
@@ -82,7 +69,7 @@ export function AppNavigator() {
       />
       <Tab.Screen
         name="You"
-        component={YouTab}
+        component={ProfileScreen}
         options={{
           tabBarIcon: ({ color, focused }) => <User size={23} color={color} strokeWidth={focused ? 2.4 : 2} />,
         }}

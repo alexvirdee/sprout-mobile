@@ -1,17 +1,13 @@
 /**
- * API contract types shared by the service layer.
+ * API contract types shared by the service layer. Auth uses a single JWT.
  */
 
 import { User } from './models';
 
-export interface AuthTokens {
-  accessToken: string;
-  refreshToken: string;
-}
-
+/** Response from POST /auth/signup and /auth/login. */
 export interface AuthResponse {
+  token: string;
   user: User;
-  tokens: AuthTokens;
 }
 
 export interface ApiErrorShape {

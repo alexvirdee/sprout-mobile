@@ -10,10 +10,11 @@ import { Lock } from 'lucide-react-native';
 
 import { colors, palette, shadows } from '@theme/index';
 import { Text } from '../ui/Text';
+import { Emoji } from '../ui/Emoji';
 
 type Tone = 'green' | 'gold' | 'terra' | 'sage';
 
-const TONE_GRADIENTS: Record<Tone, string[]> = {
+const TONE_GRADIENTS: Record<Tone, readonly [string, string, ...string[]]> = {
   green: [palette.green[400], palette.green[600]],
   gold: [palette.gold[300], palette.gold[500]],
   terra: [palette.terra[300], palette.terra[500]],
@@ -47,7 +48,7 @@ export function AchievementBadge({
             end={{ x: 1, y: 1 }}
             style={[styles.disc, { width: size, height: size, borderRadius: size / 2 }, shadows.md]}
           >
-            <Text style={{ fontSize: size * 0.42 }}>{icon}</Text>
+            <Emoji size={size * 0.42}>{icon}</Emoji>
           </LinearGradient>
         ) : (
           <View
@@ -57,7 +58,7 @@ export function AchievementBadge({
               { width: size, height: size, borderRadius: size / 2 },
             ]}
           >
-            <Text style={{ fontSize: size * 0.42, opacity: 0.45 }}>{icon}</Text>
+            <Emoji size={size * 0.42} style={{ opacity: 0.45 }}>{icon}</Emoji>
             <View style={styles.lockChip}>
               <Lock size={13} color={colors.text.subtle} strokeWidth={2.4} />
             </View>

@@ -10,6 +10,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 
 import { gradients, shadows, spacing } from '@theme/index';
 import { Text } from '../ui/Text';
+import { Emoji } from '../ui/Emoji';
 
 export interface EmptyStateProps {
   icon?: string;
@@ -27,7 +28,7 @@ export function EmptyState({ icon = '🌱', title, message, action }: EmptyState
         end={gradients.meadow.end}
         style={[styles.disc, shadows.xs]}
       >
-        <Text style={styles.icon}>{icon}</Text>
+        <Emoji size={44}>{icon}</Emoji>
       </LinearGradient>
       <Text variant="h2" color="strong" align="center">
         {title}
@@ -62,7 +63,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginBottom: spacing.lg,
   },
-  icon: { fontSize: 44 },
   message: { marginTop: 8 },
   action: { marginTop: spacing.xl },
 });

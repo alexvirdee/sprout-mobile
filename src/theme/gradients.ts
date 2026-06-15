@@ -5,7 +5,8 @@
  */
 
 type Gradient = {
-  colors: string[];
+  // Tuple (≥2 colors) to satisfy expo-linear-gradient's `colors` prop type.
+  colors: readonly [string, string, ...string[]];
   start: { x: number; y: number };
   end: { x: number; y: number };
   locations?: number[];

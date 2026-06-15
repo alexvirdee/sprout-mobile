@@ -1,15 +1,15 @@
 /**
- * SignUpScreen — name + email + password account creation, with the same
- * Google option. Validation copy stays gentle (see utils/validation).
+ * SignUpScreen — name + email + password account creation. Uses the app-wide
+ * KeyboardAwareScreen + FormTextInput, with focus chaining between fields.
  */
 
-import React, { useState } from 'react';
-import { Alert, KeyboardAvoidingView, Platform, Pressable, StyleSheet, View } from 'react-native';
-import { Controller, useForm } from 'react-hook-form';
+import React, { useRef, useState } from 'react';
+import { Alert, Pressable, StyleSheet, TextInput, View } from 'react-native';
+import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { ChevronLeft, Mail, Lock, User as UserIcon } from 'lucide-react-native';
 
-import { Button, IconButton, Input, ScreenContainer, Text } from '@components/index';
+import { Button, FormTextInput, IconButton, KeyboardAwareScreen, Text } from '@components/index';
 import { colors, palette, spacing } from '@theme/index';
 import { useAuth } from '@hooks/useAuth';
 import { signUpSchema, SignUpValues } from '@utils/validation';
@@ -21,6 +21,8 @@ import { GoogleButton, OrDivider } from './parts';
 export function SignUpScreen({ navigation }: AuthStackScreenProps<'SignUp'>) {
   const { signup } = useAuth();
   const [googleLoading, setGoogleLoading] = useState(false);
+  const emailRef = useRef<TextInput>(null);
+  const passwordRef = useRef<TextInput>(null);
 
   const { control, handleSubmit, setError, formState } = useForm<SignUpValues>({
     resolver: zodResolver(signUpSchema),
@@ -52,113 +54,97 @@ export function SignUpScreen({ navigation }: AuthStackScreenProps<'SignUp'>) {
   };
 
   return (
-    <ScreenContainer scroll>
-      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
-        <IconButton
-          accessibilityLabel="Go back"
-          variant="ghost"
-          onPress={() => navigation.goBack()}
-          style={styles.back}
-        >
+    <KeyboardAwareScreen
+      header={
+        <IconButton accessibilityLabel="Go back" variant="ghost" onPress={() => navigation.goBack()} style={styles.back}>
           <ChevronLeft size={24} color={colors.text.strong} />
         </IconButton>
+      }
+    >
+      <View style={styles.headerText}>
+        <Text variant="display" color="strong">
+          Grow something good.
+        </Text>
+        <Text variant="bodyLarge" color="muted">
+          Create your account and plant your first seed.
+        </Text>
+      </View>
 
-        <View style={styles.header}>
-          <Text variant="display" color="strong">
-            Grow something good.
+      <View style={styles.form}>
+        <FormTextInput
+          control={control}
+          name="name"
+          label="Name"
+          placeholder="Maya Flores"
+          autoCapitalize="words"
+          autoComplete="name"
+          textContentType="name"
+          returnKeyType="next"
+          blurOnSubmit={false}
+          onSubmitEditing={() => emailRef.current?.focus()}
+          iconLeft={<UserIcon size={20} color={colors.text.subtle} />}
+        />
+        <FormTextInput
+          control={control}
+          name="email"
+          inputRef={emailRef}
+          label="Email"
+          placeholder="you@garden.com"
+          keyboardType="email-address"
+          autoCapitalize="none"
+          autoComplete="email"
+          textContentType="emailAddress"
+          returnKeyType="next"
+          blurOnSubmit={false}
+          onSubmitEditing={() => passwordRef.current?.focus()}
+          iconLeft={<Mail size={20} color={colors.text.subtle} />}
+        />
+        <FormTextInput
+          control={control}
+          name="password"
+          inputRef={passwordRef}
+          label="Password"
+          placeholder="At least 8 characters"
+          secureTextEntry
+          passwordToggle
+          autoCapitalize="none"
+          textContentType="newPassword"
+          returnKeyType="done"
+          onSubmitEditing={handleSubmit(onSubmit)}
+          iconLeft={<Lock size={20} color={colors.text.subtle} />}
+          hint="Use 8+ characters with a letter and a number."
+        />
+
+        <Button
+          label="Create account"
+          size="lg"
+          fullWidth
+          loading={formState.isSubmitting}
+          onPress={handleSubmit(onSubmit)}
+          style={styles.submit}
+        />
+
+        <OrDivider />
+        <GoogleButton onPress={onGoogle} disabled={googleLoading} />
+      </View>
+
+      <View style={styles.footer}>
+        <Text variant="body" color="muted">
+          Already growing with us?{' '}
+        </Text>
+        <Pressable onPress={() => navigation.navigate('SignIn')} hitSlop={6}>
+          <Text variant="label" tint={palette.green[700]}>
+            Sign in
           </Text>
-          <Text variant="bodyLarge" color="muted">
-            Create your account and plant your first seed.
-          </Text>
-        </View>
-
-        <View style={styles.form}>
-          <Controller
-            control={control}
-            name="name"
-            render={({ field: { onChange, onBlur, value }, fieldState }) => (
-              <Input
-                label="Name"
-                placeholder="Maya Flores"
-                autoCapitalize="words"
-                autoComplete="name"
-                iconLeft={<UserIcon size={20} color={colors.text.subtle} />}
-                value={value}
-                onChangeText={onChange}
-                onBlur={onBlur}
-                error={fieldState.error?.message}
-              />
-            )}
-          />
-          <Controller
-            control={control}
-            name="email"
-            render={({ field: { onChange, onBlur, value }, fieldState }) => (
-              <Input
-                label="Email"
-                placeholder="you@garden.com"
-                keyboardType="email-address"
-                autoCapitalize="none"
-                autoComplete="email"
-                iconLeft={<Mail size={20} color={colors.text.subtle} />}
-                value={value}
-                onChangeText={onChange}
-                onBlur={onBlur}
-                error={fieldState.error?.message}
-              />
-            )}
-          />
-          <Controller
-            control={control}
-            name="password"
-            render={({ field: { onChange, onBlur, value }, fieldState }) => (
-              <Input
-                label="Password"
-                placeholder="At least 8 characters"
-                secureTextEntry
-                passwordToggle
-                autoCapitalize="none"
-                iconLeft={<Lock size={20} color={colors.text.subtle} />}
-                value={value}
-                onChangeText={onChange}
-                onBlur={onBlur}
-                error={fieldState.error?.message}
-                hint="Use 8+ characters with a letter and a number."
-              />
-            )}
-          />
-
-          <Button
-            label="Create account"
-            size="lg"
-            fullWidth
-            loading={formState.isSubmitting}
-            onPress={handleSubmit(onSubmit)}
-            style={styles.submit}
-          />
-
-          <OrDivider />
-          <GoogleButton onPress={onGoogle} disabled={googleLoading} />
-        </View>
-
-        <View style={styles.footer}>
-          <Text variant="body" color="muted">
-            Already growing with us?{' '}
-          </Text>
-          <Pressable onPress={() => navigation.navigate('SignIn')} hitSlop={6}>
-            <Text variant="label" tint={palette.green[700]}>
-              Sign in
-            </Text>
-          </Pressable>
-        </View>
-      </KeyboardAvoidingView>
-    </ScreenContainer>
+        </Pressable>
+      </View>
+    </KeyboardAwareScreen>
   );
 }
 
 const styles = StyleSheet.create({
-  back: { marginTop: spacing.sm, marginLeft: -spacing.sm },
-  header: { marginTop: spacing.base, marginBottom: spacing.xl, rowGap: spacing.sm },
+  back: { marginTop: spacing.sm, marginLeft: spacing.base - spacing.sm },
+  headerText: { marginTop: spacing.base, marginBottom: spacing.xl, rowGap: spacing.sm },
   form: { rowGap: spacing.base },
   submit: { marginTop: spacing.xs },
   footer: {

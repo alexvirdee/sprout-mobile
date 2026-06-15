@@ -1,50 +1,30 @@
 /**
  * apiClient — a thin fetch wrapper that:
- *  - prefixes the API base URL,
- *  - attaches the bearer access token,
- *  - transparently refreshes once on a 401 and retries,
- *  - surfaces failures as a typed ApiError.
- *
- * The refresh call uses raw fetch (not this wrapper) to avoid recursion.
+ *  - prefixes the API base URL (env.apiBaseUrl),
+ *  - attaches the bearer token from secure storage,
+ *  - surfaces failures as a typed ApiError,
+ *  - clears the session + notifies on a 401 for an authenticated request.
  */
 
 import { env } from '@/config/env';
-import { ApiError, AuthTokens } from '@app-types/api';
-import { getAccessToken, getRefreshToken, setTokens, clearTokens } from './secureStorage';
+import { ApiError } from '@app-types/api';
+import { getToken, clearToken } from './secureStorage';
 
-type Json = Record<string, unknown> | unknown[];
+// Any JSON-serializable object/array body. `object` lets typed payload
+// interfaces (which lack an index signature) pass without casting.
+type Json = object;
 
 interface RequestOptions extends Omit<RequestInit, 'body'> {
   body?: Json;
-  /** Skip auth header + refresh handling (used by auth endpoints). */
+  /** Attach the bearer token + treat a 401 as session loss. Default true. */
   auth?: boolean;
 }
 
 let onUnauthorized: (() => void) | null = null;
 
-/** Let the auth store know when the session is irrecoverably gone. */
+/** Let the auth store know when the session is gone (invalid/expired token). */
 export function setUnauthorizedHandler(handler: (() => void) | null): void {
   onUnauthorized = handler;
-}
-
-async function refreshTokens(): Promise<boolean> {
-  const refreshToken = await getRefreshToken();
-  if (!refreshToken) return false;
-
-  try {
-    const res = await fetch(`${env.apiBaseUrl}/auth/refresh`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ refreshToken }),
-    });
-    if (!res.ok) return false;
-    const data = (await res.json()) as { tokens?: AuthTokens };
-    if (!data.tokens) return false;
-    await setTokens(data.tokens);
-    return true;
-  } catch {
-    return false;
-  }
 }
 
 async function parse<T>(res: Response): Promise<T> {
@@ -60,9 +40,9 @@ async function parse<T>(res: Response): Promise<T> {
   return data as T;
 }
 
-async function send<T>(path: string, options: RequestOptions, retry = true): Promise<T> {
+async function send<T>(path: string, options: RequestOptions): Promise<T> {
   const { body, auth = true, headers, ...rest } = options;
-  const token = auth ? await getAccessToken() : null;
+  const token = auth ? await getToken() : null;
 
   const res = await fetch(`${env.apiBaseUrl}${path}`, {
     ...rest,
@@ -74,10 +54,9 @@ async function send<T>(path: string, options: RequestOptions, retry = true): Pro
     body: body !== undefined ? JSON.stringify(body) : undefined,
   });
 
-  if (res.status === 401 && auth && retry) {
-    const refreshed = await refreshTokens();
-    if (refreshed) return send<T>(path, options, false);
-    await clearTokens();
+  if (res.status === 401 && auth) {
+    // Token missing/expired/invalid — drop it and let the store sign out.
+    await clearToken();
     onUnauthorized?.();
   }
 
