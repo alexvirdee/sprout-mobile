@@ -35,6 +35,9 @@ export type GardensStackParamList = {
   GardenDetail: { id: string; flash?: string };
   CreateGarden: undefined;
   EditGarden: { id: string };
+  AddPlant: { gardenId?: string; name?: string } | undefined;
+  PlantDetail: { id: string; flash?: string };
+  EditPlant: { id: string };
 };
 
 export type GardensStackScreenProps<T extends keyof GardensStackParamList> = NativeStackScreenProps<

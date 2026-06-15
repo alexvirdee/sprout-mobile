@@ -13,6 +13,9 @@ import { GardensScreen } from '@features/gardens/screens/GardensScreen';
 import { GardenDetailScreen } from '@features/gardens/screens/GardenDetailScreen';
 import { CreateGardenScreen } from '@features/gardens/screens/CreateGardenScreen';
 import { EditGardenScreen } from '@features/gardens/screens/EditGardenScreen';
+import { AddPlantScreen } from '@features/plants/screens/AddPlantScreen';
+import { PlantDetailScreen } from '@features/plants/screens/PlantDetailScreen';
+import { EditPlantScreen } from '@features/plants/screens/EditPlantScreen';
 
 const Stack = createNativeStackNavigator<GardensStackParamList>();
 
@@ -25,6 +28,9 @@ export function GardensNavigator() {
       <Stack.Screen name="GardenDetail" component={GardenDetailScreen} />
       <Stack.Screen name="CreateGarden" component={CreateGardenScreen} options={{ animation: 'slide_from_bottom' }} />
       <Stack.Screen name="EditGarden" component={EditGardenScreen} options={{ animation: 'slide_from_bottom' }} />
+      <Stack.Screen name="AddPlant" component={AddPlantScreen} options={{ animation: 'slide_from_bottom' }} />
+      <Stack.Screen name="PlantDetail" component={PlantDetailScreen} />
+      <Stack.Screen name="EditPlant" component={EditPlantScreen} options={{ animation: 'slide_from_bottom' }} />
     </Stack.Navigator>
   );
 }

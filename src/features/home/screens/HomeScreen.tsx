@@ -85,7 +85,11 @@ export function HomeScreen({ navigation }: AppTabScreenProps<'Home'>) {
 
           <TodayCareCard items={care} />
           <SeasonalTipCard tip={tip} />
-          <QuickActions onAddGarden={goToCreateGarden} onComingSoon={comingSoon} />
+          <QuickActions
+            onAddGarden={goToCreateGarden}
+            onAddPlant={() => navigation.navigate('Garden', { screen: 'AddPlant' })}
+            onComingSoon={comingSoon}
+          />
         </View>
       </ScrollView>
     </View>
