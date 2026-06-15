@@ -71,7 +71,9 @@
       "Bash(node -e \"console.log\\(require\\('./package.json'\\).dependencies.multer\\)\")",
       "Bash(echo \"installed multer $\\(node -e \"console.log\\(require\\('./package.json'\\).dependencies.multer\\)\"\\)\")",
       "Bash(node -e \"console.log\\('mongoose', require\\('mongoose/package.json'\\).version\\)\")",
-      "Bash(node /tmp/avatar_e2e.mjs)"
+      "Bash(node /tmp/avatar_e2e.mjs)",
+      "Bash(node -e \"console.log\\(require\\('expo-notifications/package.json'\\).version\\)\")",
+      "Bash(node /tmp/garden_coords_e2e.mjs)"
     ]
   }
 }

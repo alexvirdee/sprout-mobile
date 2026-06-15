@@ -1,7 +1,7 @@
 /**
- * geocoding.service — city/place search via Open-Meteo's geocoding API. Free, no
- * API key (same provider as the weather service), so it's called directly from
- * the app. Used for type-ahead location pickers.
+ * geocoding — city/place search via Open-Meteo's geocoding API. Free, no API key
+ * (same provider as the weather service), called directly from the app. Shared
+ * service powering type-ahead location pickers (profile + gardens).
  */
 
 const BASE_URL = 'https://geocoding-api.open-meteo.com/v1/search';

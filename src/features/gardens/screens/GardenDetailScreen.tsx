@@ -27,6 +27,7 @@ import { GardensStackScreenProps } from '@app-types/navigation';
 import { useGarden } from '../hooks/useGarden';
 import { useArchiveGarden } from '../hooks/useArchiveGarden';
 import { GardenStatsCard } from '../components/GardenStatsCard';
+import { GardenWeatherCard } from '../components/GardenWeatherCard';
 import { FlashBanner } from '../components/FlashBanner';
 import {
   ACCENT_COLORS,
@@ -152,6 +153,13 @@ export function GardenDetailScreen({ navigation, route }: GardensStackScreenProp
             onPress={() => navigation.navigate('Water', { screen: 'LogWatering', params: { gardenId: id } })}
             style={styles.waterCta}
           />
+
+          {garden.latitude != null && garden.longitude != null ? (
+            <View style={styles.section}>
+              <SectionHeader title="Local weather" />
+              <GardenWeatherCard latitude={garden.latitude} longitude={garden.longitude} />
+            </View>
+          ) : null}
 
           {/* Overview */}
           <View style={styles.section}>

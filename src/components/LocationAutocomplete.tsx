@@ -1,11 +1,11 @@
 /**
  * LocationAutocomplete — a text field with a city/place type-ahead powered by
  * the free Open-Meteo geocoding API. Type "Ta" → "Tampa, FL" etc. Free text is
- * still allowed (the field is optional); picking a suggestion fills the formatted
- * "City, ST" / "City, Country" label.
+ * still allowed; picking a suggestion fills the formatted label and (optionally)
+ * reports the selected place's coordinates via `onSelectPlace`.
  *
- * Lives in a KeyboardAwareScreen whose ScrollView uses
- * keyboardShouldPersistTaps="handled", so suggestion taps register while the
+ * Use inside a KeyboardAwareScreen whose ScrollView sets
+ * keyboardShouldPersistTaps="handled" so suggestion taps register while the
  * keyboard is open.
  */
 
@@ -13,21 +13,34 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Keyboard, Pressable, StyleSheet, View } from 'react-native';
 import { MapPin } from 'lucide-react-native';
 
-import { AppTextInput, Card, Spinner, Text } from '@components/index';
+import { useCitySearch } from '@hooks/useCitySearch';
+import { formatPlace, GeoPlace, placeSubtitle } from '@services/geocoding';
 import { colors, palette } from '@theme/index';
-import { useCitySearch } from '@features/weather/hooks/useCitySearch';
-import { formatPlace, GeoPlace, placeSubtitle } from '@features/weather/services/geocoding.service';
+import { AppTextInput } from './ui/AppTextInput';
+import { Card } from './ui/Card';
+import { Text } from './ui/Text';
+import { Spinner } from './feedback/LoadingState';
 
 export interface LocationAutocompleteProps {
   value: string;
   onChange: (value: string) => void;
+  /** Fired when a suggestion is chosen — carries lat/long for the picked place. */
+  onSelectPlace?: (place: GeoPlace) => void;
   label?: string;
   placeholder?: string;
   hint?: string;
   error?: string;
 }
 
-export function LocationAutocomplete({ value, onChange, label, placeholder, hint, error }: LocationAutocompleteProps) {
+export function LocationAutocomplete({
+  value,
+  onChange,
+  onSelectPlace,
+  label,
+  placeholder,
+  hint,
+  error,
+}: LocationAutocompleteProps) {
   const [focused, setFocused] = useState(false);
   // Suppress search right after a pick (or for an already-set value on mount) so
   // we don't immediately re-search the selected text.
@@ -49,6 +62,7 @@ export function LocationAutocomplete({ value, onChange, label, placeholder, hint
   const choose = (place: GeoPlace) => {
     setSuppressed(true);
     onChange(formatPlace(place));
+    onSelectPlace?.(place);
     Keyboard.dismiss();
     setFocused(false);
   };

@@ -31,6 +31,8 @@ export interface Garden {
   sizeType: SizeType;
   dimensions?: GardenDimensions;
   notes?: string;
+  latitude?: number | null;
+  longitude?: number | null;
   plantCount: number;
   taskCount: number;
   healthStatus: string;
@@ -53,6 +55,8 @@ export interface GardenPayload {
   sizeType: SizeType;
   dimensions?: GardenDimensions;
   notes?: string;
+  latitude?: number;
+  longitude?: number;
 }
 
 export interface GardenOption<T extends string> {
