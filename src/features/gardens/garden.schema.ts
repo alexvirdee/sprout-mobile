@@ -40,6 +40,9 @@ export const gardenFormSchema = z.object({
   width: numericString,
   unit: z.enum(units),
   notes: z.string().max(2000),
+  // Set programmatically when a city is picked (not a text field).
+  latitude: z.number().nullable(),
+  longitude: z.number().nullable(),
 });
 
 export type GardenFormValues = z.infer<typeof gardenFormSchema>;
@@ -56,6 +59,8 @@ export const emptyGardenForm: GardenFormValues = {
   width: '',
   unit: 'ft',
   notes: '',
+  latitude: null,
+  longitude: null,
 };
 
 /** Map a saved garden into form values for editing. */
@@ -72,6 +77,8 @@ export function toFormValues(g: Garden): GardenFormValues {
     width: g.dimensions?.width != null ? String(g.dimensions.width) : '',
     unit: g.dimensions?.unit ?? 'ft',
     notes: g.notes ?? '',
+    latitude: g.latitude ?? null,
+    longitude: g.longitude ?? null,
   };
 }
 
@@ -97,5 +104,7 @@ export function toPayload(v: GardenFormValues): GardenPayload {
       unit: v.unit,
     };
   }
+  if (v.latitude != null) payload.latitude = v.latitude;
+  if (v.longitude != null) payload.longitude = v.longitude;
   return payload;
 }

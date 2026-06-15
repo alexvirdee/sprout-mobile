@@ -2,16 +2,16 @@
  * GardenForm — the reusable garden field sections, built on the app-wide
  * FormTextInput / AppTextInput primitives. Exposed as three section components
  * (Basics / Location / Size) so the create wizard can show one per step, plus a
- * combined `GardenForm` used by edit. Pickers stay as Controllers (not text).
+ * combined `GardenForm` used by edit. The Location section uses the shared
+ * LocationAutocomplete; picking a city also captures lat/long (for weather).
  */
 
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
-import { Control, Controller, useWatch } from 'react-hook-form';
-import { MapPin } from 'lucide-react-native';
+import { Control, Controller, UseFormSetValue, useWatch } from 'react-hook-form';
 
-import { FormTextInput, SegmentedControl, Text } from '@components/index';
-import { colors, spacing } from '@theme/index';
+import { FormTextInput, LocationAutocomplete, SegmentedControl, Text } from '@components/index';
+import { spacing } from '@theme/index';
 import { GardenFormValues } from '../garden.schema';
 import { GardenTypePicker } from './GardenTypePicker';
 import { SunExposurePicker } from './SunExposurePicker';
@@ -19,6 +19,10 @@ import { SizeSelector } from './SizeSelector';
 
 interface SectionProps {
   control: Control<GardenFormValues>;
+}
+
+interface LocationSectionProps extends SectionProps {
+  setValue: UseFormSetValue<GardenFormValues>;
 }
 
 function FieldHeader({ label, hint }: { label: string; hint?: string }) {
@@ -54,24 +58,26 @@ export function GardenBasicsFields({ control }: SectionProps) {
   );
 }
 
-export function GardenLocationFields({ control }: SectionProps) {
+export function GardenLocationFields({ control, setValue }: LocationSectionProps) {
   return (
     <View style={styles.section}>
-      <FormTextInput
+      <Controller
         control={control}
         name="locationLabel"
-        label="Location label"
-        placeholder="Tampa backyard"
-        returnKeyType="next"
-        hint="Where does this garden live?"
-        iconLeft={<MapPin size={20} color={colors.text.subtle} />}
-      />
-      <FormTextInput
-        control={control}
-        name="cityOrZip"
-        label="City or ZIP (optional)"
-        placeholder="Tampa, FL · 33602"
-        returnKeyType="next"
+        render={({ field, fieldState }) => (
+          <LocationAutocomplete
+            label="Location"
+            placeholder="Start typing a city…"
+            hint="Type a city to set this garden's location & local weather."
+            value={field.value}
+            onChange={field.onChange}
+            error={fieldState.error?.message}
+            onSelectPlace={(p) => {
+              setValue('latitude', p.latitude);
+              setValue('longitude', p.longitude);
+            }}
+          />
+        )}
       />
       <View>
         <FieldHeader label="Sun exposure" hint="Sun exposure helps Sprout recommend better care later." />
@@ -161,11 +167,11 @@ export function GardenSizeFields({ control }: SectionProps) {
 }
 
 /** All sections stacked — used by the edit screen. */
-export function GardenForm({ control }: SectionProps) {
+export function GardenForm({ control, setValue }: LocationSectionProps) {
   return (
     <View style={styles.all}>
       <GardenBasicsFields control={control} />
-      <GardenLocationFields control={control} />
+      <GardenLocationFields control={control} setValue={setValue} />
       <GardenSizeFields control={control} />
     </View>
   );

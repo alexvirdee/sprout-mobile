@@ -42,7 +42,8 @@
         {
           "photosPermission": "Sprout uses your photos so you can set a profile picture."
         }
-      ]
+      ],
+      "expo-notifications"
     ],
     "extra": {
       "apiBaseUrl": "http://localhost:4000/api",

@@ -22,6 +22,8 @@ export { AppTextInput, AppTextInput as Input } from './ui/AppTextInput';
 export type { AppTextInputProps, AppTextInputProps as InputProps } from './ui/AppTextInput';
 export { FormTextInput } from './form/FormTextInput';
 export type { FormTextInputProps } from './form/FormTextInput';
+export { LocationAutocomplete } from './LocationAutocomplete';
+export type { LocationAutocompleteProps } from './LocationAutocomplete';
 export { Checkbox } from './ui/Checkbox';
 export type { CheckboxProps } from './ui/Checkbox';
 export { Switch } from './ui/Switch';

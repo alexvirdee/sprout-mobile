@@ -18,7 +18,5 @@ export { AccountSection } from './AccountSection';
 export type { AccountSectionProps } from './AccountSection';
 export { EmptyProfileState } from './EmptyProfileState';
 export type { EmptyProfileStateProps } from './EmptyProfileState';
-export { LocationAutocomplete } from './LocationAutocomplete';
-export type { LocationAutocompleteProps } from './LocationAutocomplete';
 export { SettingRow, SettingDivider } from './SettingRow';
 export type { SettingRowProps } from './SettingRow';
