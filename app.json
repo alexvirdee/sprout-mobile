@@ -1,0 +1,41 @@
+{
+  "expo": {
+    "name": "Sprout",
+    "slug": "sprout",
+    "scheme": "sprout",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "icon": "./assets/icon.png",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#FAF8F2"
+    },
+    "assetBundlePatterns": ["**/*"],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.sprout.app"
+    },
+    "android": {
+      "package": "com.sprout.app",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#3D9A41"
+      }
+    },
+    "web": {
+      "bundler": "metro",
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": ["expo-font", "expo-secure-store"],
+    "extra": {
+      "apiBaseUrl": "http://localhost:4000/api",
+      "googleOAuth": {
+        "iosClientId": "",
+        "androidClientId": "",
+        "webClientId": ""
+      }
+    }
+  }
+}

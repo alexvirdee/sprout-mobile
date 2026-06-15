@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm view *)",
+      "Bash(rm -rf __TRACKED_VAR__/metro-cache)",
+      "Bash(npx expo *)",
+      "Bash(echo \"launched expo start, pid $!\")",
+      "Bash(sleep 6; cat /tmp/sprout-expo.log 2>&1 | head -40)",
+      "Bash(curl -s -o /tmp/sprout-bundle.out -w 'HTTP %{http_code} | %{size_download} bytes | %{time_total}s\\\\n' --max-time 240 'http://localhost:8081/index.bundle?platform=ios&dev=true&minify=false')",
+      "Bash(:)",
+      "Bash(pkill -f \"expo start\")",
+      "Bash(pkill -f \"node.*metro\")"
+    ]
+  }
+}

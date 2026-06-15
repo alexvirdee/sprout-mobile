@@ -1,0 +1,10 @@
+<svg width="220" height="64" viewBox="0 0 220 64" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Sprout">
+  <path d="M32 56 C32 46 32 41 32 35" stroke="#3D9A41" stroke-width="5" stroke-linecap="round"></path>
+  <g transform="rotate(-40 32 39)">
+    <path d="M32 39 C24.5 35 21 26.5 32 18 C43 26.5 39.5 35 32 39 Z" fill="#4CAF50"></path>
+  </g>
+  <g transform="rotate(40 32 39)">
+    <path d="M32 39 C24.5 35 21 26.5 32 18 C43 26.5 39.5 35 32 39 Z" fill="#A8C686"></path>
+  </g>
+  <text x="62" y="42" font-family="Outfit, sans-serif" font-size="33" font-weight="700" letter-spacing="-0.6" fill="#3A2D20">Sprout</text>
+</svg>
