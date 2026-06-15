@@ -13,9 +13,9 @@ import { Home, Sprout, Droplet, User } from 'lucide-react-native';
 import { colors, palette } from '@theme/index';
 import { AppTabParamList } from '@app-types/navigation';
 import { HomeScreen } from '@features/home/screens/HomeScreen';
-import { ProfileScreen } from '@screens/profile/ProfileScreen';
 import { GardensNavigator } from './GardensNavigator';
 import { WateringNavigator } from './WateringNavigator';
+import { ProfileNavigator } from './ProfileNavigator';
 
 const Tab = createBottomTabNavigator<AppTabParamList>();
 
@@ -62,9 +62,13 @@ export function AppNavigator() {
       />
       <Tab.Screen
         name="You"
-        component={ProfileScreen}
-        options={{
-          tabBarIcon: ({ color, focused }) => <User size={23} color={color} strokeWidth={focused ? 2.4 : 2} />,
+        component={ProfileNavigator}
+        options={({ route }) => {
+          const focusedRoute = getFocusedRouteNameFromRoute(route) ?? 'ProfileHome';
+          return {
+            tabBarIcon: ({ color, focused }) => <User size={23} color={color} strokeWidth={focused ? 2.4 : 2} />,
+            tabBarStyle: focusedRoute === 'ProfileHome' ? styles.tabBar : { display: 'none' },
+          };
         }}
       />
     </Tab.Navigator>
