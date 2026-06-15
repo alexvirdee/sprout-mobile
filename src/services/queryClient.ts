@@ -24,6 +24,6 @@ export const queryKeys = {
   gardens: ['gardens'] as const,
   garden: (id: string) => ['gardens', id] as const,
   plants: ['plants'] as const,
-  plant: (id: string) => ['plants', id] as const,
+  plant: (id: string) => ['plant', id] as const,
   tasks: ['tasks'] as const,
 };
