@@ -6,7 +6,7 @@
  */
 
 import React, { createContext, useContext, useCallback } from 'react';
-import { View } from 'react-native';
+import { useColorScheme, View } from 'react-native';
 import * as SplashScreen from 'expo-splash-screen';
 import {
   useFonts as useOutfit,
@@ -28,6 +28,7 @@ import {
   JetBrainsMono_500Medium,
 } from '@expo-google-fonts/jetbrains-mono';
 
+import { useAuthStore } from '@store/authStore';
 import { theme, Theme } from './index';
 
 // Default is filled at module-eval time; to stay safe against the index <-> this
@@ -36,6 +37,20 @@ import { theme, Theme } from './index';
 const ThemeContext = createContext<Theme>({} as Theme);
 
 export const useTheme = (): Theme => useContext(ThemeContext);
+
+export type ColorScheme = 'light' | 'dark';
+
+/**
+ * Resolve a user theme preference + the device scheme into the active scheme.
+ * "system" follows the device; otherwise the explicit choice wins.
+ */
+export function resolveScheme(
+  preference: 'light' | 'dark' | 'system' | undefined,
+  deviceScheme: ColorScheme | null | undefined
+): ColorScheme {
+  if (preference === 'light' || preference === 'dark') return preference;
+  return deviceScheme ?? 'light';
+}
 
 // Keep the native splash visible while we load fonts.
 void SplashScreen.preventAutoHideAsync();
@@ -62,6 +77,16 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     }
   }, [fontsLoaded, fontError]);
 
+  // Resolve the active color scheme from the user's saved preference + device.
+  // This is the dark-mode *foundation*: the scheme is computed and reacts to
+  // changes, but both schemes currently map to the light palette. When a dark
+  // palette exists, map `dark` to it below — no other call sites change.
+  const themePreference = useAuthStore((s) => s.user?.themePreference);
+  const deviceScheme = useColorScheme();
+  const scheme = resolveScheme(themePreference, deviceScheme);
+  const palettes: Record<ColorScheme, Theme> = { light: theme, dark: theme };
+  const activeTheme = palettes[scheme];
+
   // Render nothing until fonts resolve (success or error) so we never flash
   // the system font. The native splash stays up during this window.
   if (!fontsLoaded && !fontError) {
@@ -69,7 +94,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <ThemeContext.Provider value={theme}>
+    <ThemeContext.Provider value={activeTheme}>
       <View style={{ flex: 1 }} onLayout={onLayoutRootView}>
         {children}
       </View>

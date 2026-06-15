@@ -58,7 +58,20 @@
       "Bash(git ls-tree *)",
       "Bash(node -e \"console.log\\(JSON.stringify\\(require\\('./package.json'\\).scripts,null,2\\)\\)\")",
       "Bash(node -e \"console.log\\(require\\('./package.json'\\).scripts.test || 'none'\\)\")",
-      "Bash(npx jest *)"
+      "Bash(npx jest *)",
+      "Bash(node -e \"console.log\\(require\\('expo-image-picker/package.json'\\).version\\)\")",
+      "Bash(curl -s \"https://geocoding-api.open-meteo.com/v1/search?name=Tampa&count=3&language=en&format=json\")",
+      "Bash(node -e \"let s='';process.stdin.on\\('data',d=>s+=d\\).on\\('end',\\(\\)=>{const r=JSON.parse\\(s\\).results||[];console.log\\('count:',r.length\\);r.slice\\(0,3\\).forEach\\(x=>console.log\\(' -',x.name+',',x.admin1,'\\('+x.country_code+'\\)'\\)\\)}\\)\")",
+      "Bash(curl -s \"https://geocoding-api.open-meteo.com/v1/search?name=Ta&count=4&language=en&format=json\")",
+      "Bash(node -e \"let s='';process.stdin.on\\('data',d=>s+=d\\).on\\('end',\\(\\)=>{const r=JSON.parse\\(s\\).results||[];console.log\\('count:',r.length\\);r.slice\\(0,4\\).forEach\\(x=>console.log\\(' -',x.name+',',x.admin1||'',x.country_code==='US'?'\\(US\\)':'\\('+\\(x.country||''\\)+'\\)'\\)\\)}\\)\")",
+      "Bash(curl -s \"https://geocoding-api.open-meteo.com/v1/search?name=Paris&count=2&language=en&format=json\")",
+      "Bash(node -e \"let s='';process.stdin.on\\('data',d=>s+=d\\).on\\('end',\\(\\)=>{\\(JSON.parse\\(s\\).results||[]\\).slice\\(0,2\\).forEach\\(x=>console.log\\(' -',x.name+',',x.country\\)\\)}\\)\")",
+      "Bash(node -e \"console.log\\(require\\('./package.json'\\).dependencies.multer||'NOT INSTALLED'\\)\")",
+      "Bash(npm i *)",
+      "Bash(node -e \"console.log\\(require\\('./package.json'\\).dependencies.multer\\)\")",
+      "Bash(echo \"installed multer $\\(node -e \"console.log\\(require\\('./package.json'\\).dependencies.multer\\)\"\\)\")",
+      "Bash(node -e \"console.log\\('mongoose', require\\('mongoose/package.json'\\).version\\)\")",
+      "Bash(node /tmp/avatar_e2e.mjs)"
     ]
   }
 }
