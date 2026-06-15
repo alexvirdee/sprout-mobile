@@ -36,6 +36,12 @@
         {
           "locationWhenInUsePermission": "Sprout uses your location to show local weather and gardening care suggestions."
         }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Sprout uses your photos so you can set a profile picture."
+        }
       ]
     ],
     "extra": {

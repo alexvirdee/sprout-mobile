@@ -27,5 +27,7 @@ export const queryKeys = {
   plant: (id: string) => ['plant', id] as const,
   watering: ['watering'] as const,
   wateringStats: ['watering', 'stats'] as const,
+  profileStats: ['profile', 'stats'] as const,
+  profileAchievements: ['profile', 'achievements'] as const,
   tasks: ['tasks'] as const,
 };

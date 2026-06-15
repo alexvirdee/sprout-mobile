@@ -9,11 +9,28 @@ export type PlantStatus = 'thriving' | 'water' | 'harvest' | 'resting';
 
 export type TaskType = 'water' | 'fertilize' | 'harvest' | 'prune' | 'plant' | 'other';
 
+export type ThemePreference = 'light' | 'dark' | 'system';
+
+export interface NotificationPreferences {
+  pushEnabled: boolean;
+  wateringReminders: boolean;
+  careTips: boolean;
+  seasonalTips: boolean;
+  achievements: boolean;
+}
+
 export interface User {
   id: string;
   name: string;
   email: string;
   avatar?: string | null;
+  displayName?: string | null;
+  firstName?: string | null;
+  lastName?: string | null;
+  bio?: string | null;
+  location?: string | null;
+  themePreference?: ThemePreference;
+  notificationPreferences?: NotificationPreferences;
   authProvider: AuthProvider;
   createdAt: string;
   updatedAt?: string;

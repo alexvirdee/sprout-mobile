@@ -30,6 +30,7 @@ interface AuthState {
   googleSignIn: (idToken: string) => Promise<void>;
   logout: () => Promise<void>;
   getCurrentUser: () => Promise<void>;
+  setUser: (user: User | null) => void;
   demoSignIn: () => void;
   clearError: () => void;
 }
@@ -116,6 +117,10 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     const { user } = await authService.me();
     set({ user });
   },
+
+  // Sync the app-wide session user after a profile/preferences update so the
+  // header, avatar, and settings reflect changes everywhere immediately.
+  setUser: (user) => set({ user }),
 
   demoSignIn: () => set({ status: 'authenticated', user: DEMO_USER, token: null, isDemo: true, error: null }),
 
