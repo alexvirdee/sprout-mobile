@@ -26,7 +26,7 @@ export function EditGardenScreen({ navigation, route }: GardensStackScreenProps<
   const { data: garden, isLoading } = useGarden(id);
   const update = useUpdateGarden(id);
 
-  const { control, handleSubmit, reset } = useForm<GardenFormValues>({
+  const { control, handleSubmit, reset, setValue } = useForm<GardenFormValues>({
     resolver: zodResolver(gardenFormSchema),
     defaultValues: emptyGardenForm,
     mode: 'onTouched',
@@ -73,7 +73,7 @@ export function EditGardenScreen({ navigation, route }: GardensStackScreenProps<
       }
     >
       <StatusBar style="dark" />
-      <GardenForm control={control} />
+      <GardenForm control={control} setValue={setValue} />
       {update.isError ? (
         <Text variant="bodySmall" color="danger" style={styles.err}>
           We couldn't save your changes just now. Please try again.

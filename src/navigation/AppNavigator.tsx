@@ -2,6 +2,7 @@
  * AppNavigator — the signed-in experience: a frosted bottom tab bar over the
  * warm page. Home, Garden, Water, and You are all built. The Garden and Water
  * tabs each host their own stack and hide the tab bar on their sub-screens.
+ * A headless WateringReminderManager keeps the daily reminder in sync.
  */
 
 import React from 'react';
@@ -16,62 +17,66 @@ import { HomeScreen } from '@features/home/screens/HomeScreen';
 import { GardensNavigator } from './GardensNavigator';
 import { WateringNavigator } from './WateringNavigator';
 import { ProfileNavigator } from './ProfileNavigator';
+import { WateringReminderManager } from '@features/watering/components/WateringReminderManager';
 
 const Tab = createBottomTabNavigator<AppTabParamList>();
 
 export function AppNavigator() {
   return (
-    <Tab.Navigator
-      screenOptions={{
-        headerShown: false,
-        tabBarActiveTintColor: palette.green[700],
-        tabBarInactiveTintColor: colors.text.subtle,
-        tabBarStyle: styles.tabBar,
-        tabBarLabelStyle: styles.tabLabel,
-        tabBarItemStyle: styles.tabItem,
-      }}
-    >
-      <Tab.Screen
-        name="Home"
-        component={HomeScreen}
-        options={{
-          tabBarIcon: ({ color, focused }) => <Home size={23} color={color} strokeWidth={focused ? 2.4 : 2} />,
+    <>
+      <WateringReminderManager />
+      <Tab.Navigator
+        screenOptions={{
+          headerShown: false,
+          tabBarActiveTintColor: palette.green[700],
+          tabBarInactiveTintColor: colors.text.subtle,
+          tabBarStyle: styles.tabBar,
+          tabBarLabelStyle: styles.tabLabel,
+          tabBarItemStyle: styles.tabItem,
         }}
-      />
-      <Tab.Screen
-        name="Garden"
-        component={GardensNavigator}
-        options={({ route }) => {
-          const focusedRoute = getFocusedRouteNameFromRoute(route) ?? 'GardensList';
-          return {
-            tabBarIcon: ({ color, focused }) => <Sprout size={23} color={color} strokeWidth={focused ? 2.4 : 2} />,
-            tabBarStyle: focusedRoute === 'GardensList' ? styles.tabBar : { display: 'none' },
-          };
-        }}
-      />
-      <Tab.Screen
-        name="Water"
-        component={WateringNavigator}
-        options={({ route }) => {
-          const focusedRoute = getFocusedRouteNameFromRoute(route) ?? 'WateringHome';
-          return {
-            tabBarIcon: ({ color, focused }) => <Droplet size={23} color={color} strokeWidth={focused ? 2.4 : 2} />,
-            tabBarStyle: focusedRoute === 'WateringHome' ? styles.tabBar : { display: 'none' },
-          };
-        }}
-      />
-      <Tab.Screen
-        name="You"
-        component={ProfileNavigator}
-        options={({ route }) => {
-          const focusedRoute = getFocusedRouteNameFromRoute(route) ?? 'ProfileHome';
-          return {
-            tabBarIcon: ({ color, focused }) => <User size={23} color={color} strokeWidth={focused ? 2.4 : 2} />,
-            tabBarStyle: focusedRoute === 'ProfileHome' ? styles.tabBar : { display: 'none' },
-          };
-        }}
-      />
-    </Tab.Navigator>
+      >
+        <Tab.Screen
+          name="Home"
+          component={HomeScreen}
+          options={{
+            tabBarIcon: ({ color, focused }) => <Home size={23} color={color} strokeWidth={focused ? 2.4 : 2} />,
+          }}
+        />
+        <Tab.Screen
+          name="Garden"
+          component={GardensNavigator}
+          options={({ route }) => {
+            const focusedRoute = getFocusedRouteNameFromRoute(route) ?? 'GardensList';
+            return {
+              tabBarIcon: ({ color, focused }) => <Sprout size={23} color={color} strokeWidth={focused ? 2.4 : 2} />,
+              tabBarStyle: focusedRoute === 'GardensList' ? styles.tabBar : { display: 'none' },
+            };
+          }}
+        />
+        <Tab.Screen
+          name="Water"
+          component={WateringNavigator}
+          options={({ route }) => {
+            const focusedRoute = getFocusedRouteNameFromRoute(route) ?? 'WateringHome';
+            return {
+              tabBarIcon: ({ color, focused }) => <Droplet size={23} color={color} strokeWidth={focused ? 2.4 : 2} />,
+              tabBarStyle: focusedRoute === 'WateringHome' ? styles.tabBar : { display: 'none' },
+            };
+          }}
+        />
+        <Tab.Screen
+          name="You"
+          component={ProfileNavigator}
+          options={({ route }) => {
+            const focusedRoute = getFocusedRouteNameFromRoute(route) ?? 'ProfileHome';
+            return {
+              tabBarIcon: ({ color, focused }) => <User size={23} color={color} strokeWidth={focused ? 2.4 : 2} />,
+              tabBarStyle: focusedRoute === 'ProfileHome' ? styles.tabBar : { display: 'none' },
+            };
+          }}
+        />
+      </Tab.Navigator>
+    </>
   );
 }
 
