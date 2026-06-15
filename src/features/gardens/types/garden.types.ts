@@ -34,6 +34,9 @@ export interface Garden {
   plantCount: number;
   taskCount: number;
   healthStatus: string;
+  lastWateredAt?: string | null;
+  wateringCount?: number;
+  wateringStreak?: number;
   archivedAt?: string | null;
   createdAt: string;
   updatedAt: string;

@@ -88,6 +88,7 @@ export function HomeScreen({ navigation }: AppTabScreenProps<'Home'>) {
           <QuickActions
             onAddGarden={goToCreateGarden}
             onAddPlant={() => navigation.navigate('Garden', { screen: 'AddPlant' })}
+            onWater={() => navigation.navigate('Water')}
             onComingSoon={comingSoon}
           />
         </View>

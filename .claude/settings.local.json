@@ -50,7 +50,15 @@
       "Bash(git -C /Users/alexvirdee/Desktop/alexdev/react-native/sprout-mobile branch --show-current)",
       "Bash(echo \"branch: $\\(git -C /Users/alexvirdee/Desktop/alexdev/react-native/sprout-mobile branch --show-current\\)\")",
       "Bash(bash /tmp/plants_e2e.sh)",
-      "Bash(curl -s -o /tmp/plant-bundle.out -w 'BUNDLE: HTTP %{http_code} | %{size_download} bytes | %{time_total}s\\\\n' --max-time 240 \"http://localhost:8081/index.bundle?platform=ios&dev=true&minify=false\")"
+      "Bash(curl -s -o /tmp/plant-bundle.out -w 'BUNDLE: HTTP %{http_code} | %{size_download} bytes | %{time_total}s\\\\n' --max-time 240 \"http://localhost:8081/index.bundle?platform=ios&dev=true&minify=false\")",
+      "Bash(xcode-select -p)",
+      "Bash(xcodebuild -version)",
+      "Bash(xcrun simctl *)",
+      "Bash([ -d \"$HOME/Library/Android/sdk\" ])",
+      "Bash(git ls-tree *)",
+      "Bash(node -e \"console.log\\(JSON.stringify\\(require\\('./package.json'\\).scripts,null,2\\)\\)\")",
+      "Bash(node -e \"console.log\\(require\\('./package.json'\\).scripts.test || 'none'\\)\")",
+      "Bash(npx jest *)"
     ]
   }
 }
