@@ -13,13 +13,13 @@ import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { ArrowLeft } from 'lucide-react-native';
 
-import { Button, FormTextInput, IconButton, KeyboardAwareScreen, Text } from '@components/index';
+import { Button, FormTextInput, IconButton, KeyboardAwareScreen, LocationAutocomplete, Text } from '@components/index';
 import { colors, gutter, spacing } from '@theme/index';
 import { ProfileStackScreenProps } from '@app-types/navigation';
 import { useProfile } from '../hooks/useProfile';
 import { useUpdateProfile } from '../hooks/useUpdateProfile';
 import { useAvatar } from '../hooks/useAvatar';
-import { EditableAvatar, LocationAutocomplete } from '../components';
+import { EditableAvatar } from '../components';
 import { profileFormSchema, ProfileFormValues, toFormValues } from '../profile.schema';
 import { displayNameOr } from '../utils/profileFormat';
 

@@ -32,7 +32,7 @@ export function CreateGardenScreen({ navigation }: GardensStackScreenProps<'Crea
   const create = useCreateGarden();
   const [step, setStep] = useState(0);
 
-  const { control, handleSubmit, trigger, getValues } = useForm<GardenFormValues>({
+  const { control, handleSubmit, trigger, getValues, setValue } = useForm<GardenFormValues>({
     resolver: zodResolver(gardenFormSchema),
     defaultValues: emptyGardenForm,
     mode: 'onTouched',
@@ -94,7 +94,7 @@ export function CreateGardenScreen({ navigation }: GardensStackScreenProps<'Crea
       </View>
 
       {step === 0 ? <GardenBasicsFields control={control} /> : null}
-      {step === 1 ? <GardenLocationFields control={control} /> : null}
+      {step === 1 ? <GardenLocationFields control={control} setValue={setValue} /> : null}
       {step === 2 ? <GardenSizeFields control={control} /> : null}
       {isReview ? <ReviewCard values={getValues()} /> : null}
 

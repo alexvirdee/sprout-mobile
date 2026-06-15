@@ -1,20 +1,26 @@
 /**
- * PreferencesScreen — functional notification toggles + appearance (theme)
- * selection. Every change persists optimistically. Notification *scheduling* is
- * Phase 2; this is the settings architecture that will drive it. Turning off
- * push disables the dependent reminder toggles.
+ * PreferencesScreen — functional notification toggles, a watering-reminder
+ * schedule (daily local notification), and appearance (theme) selection. Every
+ * change persists optimistically. Turning off push disables dependent toggles.
+ * Enabling push / watering reminders requests notification permission.
  */
 
-import React from 'react';
-import { ScrollView, StyleSheet, View } from 'react-native';
+import React, { useCallback, useEffect, useState } from 'react';
+import { Alert, ScrollView, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { ArrowLeft, Award, Bell, Droplets, Leaf, Sun } from 'lucide-react-native';
 
-import { Card, IconButton, SectionHeader, SegmentedControl, Text } from '@components/index';
+import { Button, Card, IconButton, SectionHeader, SegmentedControl, Text } from '@components/index';
 import { colors, gutter, palette, spacing } from '@theme/index';
 import { ProfileStackScreenProps } from '@app-types/navigation';
-import { ThemePreference } from '@app-types/models';
+import { NotificationPreferences, ThemePreference } from '@app-types/models';
+import {
+  getNotificationPermission,
+  presentNotificationNow,
+  requestNotificationPermission,
+} from '@services/notifications';
+import { REMINDER_SLOTS, ReminderSlot, slotTime, useReminderSettings } from '@features/watering/hooks/useReminderSettings';
 import { useProfile } from '../hooks/useProfile';
 import { useNotificationPreferences } from '../hooks/useNotificationPreferences';
 import { useUpdateTheme } from '../hooks/useUpdateTheme';
@@ -35,12 +41,48 @@ const THEME_OPTIONS: { value: ThemePreference; label: string }[] = [
   { value: 'dark', label: 'Dark' },
 ];
 
+const SLOT_OPTIONS = REMINDER_SLOTS.map((s) => ({ value: s.value, label: s.label }));
+
 export function PreferencesScreen({ navigation }: ProfileStackScreenProps<'Preferences'>) {
   const insets = useSafeAreaInsets();
   const { user } = useProfile();
   const { prefs, toggle } = useNotificationPreferences();
   const updateTheme = useUpdateTheme();
   const theme = user?.themePreference ?? 'system';
+
+  const slot = useReminderSettings((s) => s.slot);
+  const setSlot = useReminderSettings((s) => s.setSlot);
+
+  const [permission, setPermission] = useState<boolean | null>(null);
+  useEffect(() => {
+    void getNotificationPermission().then(setPermission);
+  }, []);
+
+  const ensurePermission = useCallback(async () => {
+    if (permission) return true;
+    const granted = await requestNotificationPermission();
+    setPermission(granted);
+    return granted;
+  }, [permission]);
+
+  const onToggle = async (key: keyof NotificationPreferences, value: boolean) => {
+    // Ask for permission when switching reminders on; save the choice either way.
+    if (value && (key === 'pushEnabled' || key === 'wateringReminders')) {
+      await ensurePermission();
+    }
+    toggle(key, value);
+  };
+
+  const onTestReminder = async () => {
+    if (!(await ensurePermission())) {
+      Alert.alert('Notifications are off', 'Enable notifications for Sprout to receive reminders.');
+      return;
+    }
+    await presentNotificationNow('Time to water 🌿', 'This is how your daily reminder will look.');
+    Alert.alert('Sent!', 'Check your notifications for a sample reminder.');
+  };
+
+  const remindersOn = prefs.pushEnabled && prefs.wateringReminders;
 
   return (
     <View style={styles.root}>
@@ -73,7 +115,7 @@ export function PreferencesScreen({ navigation }: ProfileStackScreenProps<'Prefe
                     label={opt.label}
                     hint={opt.hint}
                     value={prefs[opt.key]}
-                    onValueChange={(v) => toggle(opt.key, v)}
+                    onValueChange={(v) => void onToggle(opt.key, v)}
                     disabled={dependent && !prefs.pushEnabled}
                   />
                 </React.Fragment>
@@ -81,9 +123,46 @@ export function PreferencesScreen({ navigation }: ProfileStackScreenProps<'Prefe
             })}
           </Card>
           <Text variant="caption" color="subtle" style={styles.note}>
-            Reminder delivery is coming soon — your choices here are saved and ready.
+            Watering reminders arrive as a gentle daily nudge. Other categories are saved for upcoming updates.
           </Text>
         </View>
+
+        {remindersOn ? (
+          <View>
+            <SectionHeader title="Watering reminder" />
+            <Card padding="md" elevation="sm" radius="lg">
+              <Text variant="bodySmall" color="muted">
+                When should we nudge you to water?
+              </Text>
+              <SegmentedControl
+                options={SLOT_OPTIONS}
+                value={slot}
+                onChange={(v: ReminderSlot) => void setSlot(v)}
+                style={styles.reminderSegments}
+              />
+              <Text variant="caption" color="subtle" style={styles.slotTime}>
+                Daily at {slotTime(slot).time}
+              </Text>
+
+              {permission === false ? (
+                <View style={styles.permRow}>
+                  <Text variant="bodySmall" color="warning" style={styles.flex}>
+                    Notifications are off for Sprout.
+                  </Text>
+                  <Button label="Enable" size="sm" variant="secondary" onPress={() => void ensurePermission()} />
+                </View>
+              ) : (
+                <Button
+                  label="Send a test reminder"
+                  size="sm"
+                  variant="secondary"
+                  onPress={() => void onTestReminder()}
+                  style={styles.testBtn}
+                />
+              )}
+            </Card>
+          </View>
+        ) : null}
 
         <View>
           <SectionHeader title="Appearance" />
@@ -114,8 +193,13 @@ const styles = StyleSheet.create({
     paddingBottom: spacing.base,
   },
   spacer: { width: 42 },
+  flex: { flex: 1 },
   body: { paddingHorizontal: gutter, paddingTop: spacing.sm, rowGap: spacing.lg },
   note: { marginTop: 8, marginLeft: 4 },
+  reminderSegments: { marginTop: spacing.base, alignSelf: 'flex-start' },
+  slotTime: { marginTop: 10 },
+  permRow: { flexDirection: 'row', alignItems: 'center', columnGap: 12, marginTop: spacing.base },
+  testBtn: { marginTop: spacing.base, alignSelf: 'flex-start' },
   appearanceMsg: { marginBottom: spacing.base },
   segments: { alignSelf: 'flex-start' },
 });
