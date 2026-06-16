@@ -41,6 +41,9 @@ export type GardensStackParamList = {
   EditPlant: { id: string };
   AIPlantScan: undefined;
   AIPlantResult: { imageUri: string; result: PlantIdentification };
+  CareCalendar: { gardenId?: string } | undefined;
+  CareTaskDetail: { id: string };
+  CareReminderSetup: { plantId: string; gardenId: string };
 };
 
 export type GardensStackScreenProps<T extends keyof GardensStackParamList> = CompositeScreenProps<

@@ -21,6 +21,9 @@ import { useAuth } from '@hooks/useAuth';
 import { ScanPlantCard } from '@features/ai/components';
 import { WaterStreakCard } from '@features/watering/components';
 import { useDeleteWatering } from '@features/watering/hooks/useDeleteWatering';
+import { UpcomingCareCard } from '@features/care/components';
+import { useCompleteCareTask } from '@features/care/hooks/useCareTaskActions';
+import { CareTask } from '@features/care/types/care.types';
 import { useHomeDashboard } from '../hooks/useHomeDashboard';
 import { useDailyGardenTip } from '../hooks/useDailyGardenTip';
 import { HOME_SECTIONS, HomeSectionKey, useHomeLayout } from '../hooks/useHomeLayout';
@@ -58,6 +61,7 @@ export function HomeScreen({ navigation }: AppTabScreenProps<'Home'>) {
     attention,
     health,
     activity,
+    careTasks,
     stats,
     gardensQuery,
     refresh,
@@ -65,6 +69,7 @@ export function HomeScreen({ navigation }: AppTabScreenProps<'Home'>) {
   } = useHomeDashboard();
   const tip = useDailyGardenTip();
   const deleteWatering = useDeleteWatering();
+  const completeCare = useCompleteCareTask();
 
   const order = useHomeLayout((s) => s.order);
   const collapsed = useHomeLayout((s) => s.collapsed);
@@ -83,6 +88,9 @@ export function HomeScreen({ navigation }: AppTabScreenProps<'Home'>) {
   const goAddPlant = () => navigation.navigate('Garden', { screen: 'AddPlant' });
   const goScan = () => navigation.navigate('Garden', { screen: 'AIPlantScan' });
   const goWater = () => navigation.navigate('Water');
+  const goCareCalendar = () => navigation.navigate('Garden', { screen: 'CareCalendar' });
+  const onViewCareTask = (t: CareTask) => navigation.navigate('Garden', { screen: 'CareTaskDetail', params: { id: t.id } });
+  const onCompleteCareTask = (t: CareTask) => completeCare.mutate(t.id);
 
   const onCareAction = (item: CareItem) => {
     switch (item.action) {
@@ -116,6 +124,7 @@ export function HomeScreen({ navigation }: AppTabScreenProps<'Home'>) {
   }, [fade]);
 
   const sectionNodes: Record<HomeSectionKey, React.ReactNode> = {
+    upcoming: careTasks.length > 0 ? <UpcomingCareCard tasks={careTasks} onView={onViewCareTask} onComplete={onCompleteCareTask} /> : null,
     care: care.length > 0 ? <TodayCareCard items={care} onAction={onCareAction} /> : null,
     attention: <NeedsAttentionCard items={attention} onPress={goGarden} />,
     health: <GardenHealthCard health={health} />,
@@ -123,6 +132,7 @@ export function HomeScreen({ navigation }: AppTabScreenProps<'Home'>) {
     activity: <RecentActivityCard items={activity} onOpen={onOpenActivity} onUndo={onUndoWatering} />,
   };
   const sectionAction: Partial<Record<HomeSectionKey, { label: string; onPress: () => void }>> = {
+    upcoming: { label: 'See all', onPress: goCareCalendar },
     gardens: { label: 'See all', onPress: goGardens },
   };
 

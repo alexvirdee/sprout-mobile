@@ -22,12 +22,14 @@ import { useArchivePlant } from '../hooks/useArchivePlant';
 import { ACCENT_COLORS } from '../types/plant.types';
 import { plantSourceMeta, plantTypeMeta, statusMeta, sunPrefMeta, wateringPrefMeta } from '../utils/plantLabels';
 import { daysSincePlanted } from '../utils/plantDates';
+import { useCareTasks } from '@features/care/hooks/useCareTasks';
+import { useCompleteCareTask } from '@features/care/hooks/useCareTaskActions';
+import { CareTaskList } from '@features/care/components';
 
 const FUTURE = [
   { emoji: '💧', label: 'Watering history' },
   { emoji: '📸', label: 'Growth photos' },
   { emoji: '🧺', label: 'Harvests' },
-  { emoji: '⏰', label: 'Reminders' },
 ];
 
 export function PlantDetailScreen({ navigation, route }: GardensStackScreenProps<'PlantDetail'>) {
@@ -37,6 +39,8 @@ export function PlantDetailScreen({ navigation, route }: GardensStackScreenProps
   const archive = useArchivePlant();
   const gardens = useGardens().data ?? [];
   const gardenName = plant ? gardens.find((g) => g.id === plant.gardenId)?.name ?? '' : '';
+  const careTasks = useCareTasks({ status: 'pending', plantId: id }).data ?? [];
+  const completeCare = useCompleteCareTask();
 
   const [flash, setFlash] = useState<string | undefined>(route.params?.flash);
   useEffect(() => {
@@ -161,6 +165,34 @@ export function PlantDetailScreen({ navigation, route }: GardensStackScreenProps
                 </Card>
               </View>
 
+              {/* Care reminders */}
+              <View style={styles.section}>
+                <SectionHeader
+                  title="Care reminders"
+                  actionLabel={careTasks.length ? 'See all' : undefined}
+                  onActionPress={careTasks.length ? () => navigation.navigate('CareCalendar', { gardenId: plant.gardenId }) : undefined}
+                />
+                {careTasks.length === 0 ? (
+                  <Card padding="md" radius="lg">
+                    <Text variant="bodySmall" color="muted">
+                      No reminders yet. Let Sprout suggest watering, pruning, and seasonal care for {plant.name}.
+                    </Text>
+                    <Button
+                      label="Set up reminders"
+                      variant="secondary"
+                      onPress={() => navigation.navigate('CareReminderSetup', { plantId: plant.id, gardenId: plant.gardenId })}
+                      style={styles.careCta}
+                    />
+                  </Card>
+                ) : (
+                  <CareTaskList
+                    tasks={careTasks.slice(0, 3)}
+                    onPressTask={(t) => navigation.navigate('CareTaskDetail', { id: t.id })}
+                    onComplete={(t) => completeCare.mutate(t.id)}
+                  />
+                )}
+              </View>
+
               {/* Future */}
               <View style={styles.section}>
                 <SectionHeader title="Coming soon" />
@@ -252,4 +284,5 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surface.card, borderWidth: 1, borderColor: colors.border.soft, borderRadius: radii.md,
   },
   actions: { marginTop: spacing['2xl'], rowGap: spacing.sm },
+  careCta: { marginTop: spacing.base, alignSelf: 'flex-start' },
 });

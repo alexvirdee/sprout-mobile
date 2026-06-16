@@ -18,6 +18,7 @@ import { GardensNavigator } from './GardensNavigator';
 import { WateringNavigator } from './WateringNavigator';
 import { ProfileNavigator } from './ProfileNavigator';
 import { WateringReminderManager } from '@features/watering/components/WateringReminderManager';
+import { CareReminderManager } from '@features/care/components/CareReminderManager';
 
 const Tab = createBottomTabNavigator<AppTabParamList>();
 
@@ -25,6 +26,7 @@ export function AppNavigator() {
   return (
     <>
       <WateringReminderManager />
+      <CareReminderManager />
       <Tab.Navigator
         screenOptions={{
           headerShown: false,

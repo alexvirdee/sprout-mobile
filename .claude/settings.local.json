@@ -74,7 +74,8 @@
       "Bash(node /tmp/avatar_e2e.mjs)",
       "Bash(node -e \"console.log\\(require\\('expo-notifications/package.json'\\).version\\)\")",
       "Bash(node /tmp/garden_coords_e2e.mjs)",
-      "Bash(node /tmp/undo_e2e.mjs)"
+      "Bash(node /tmp/undo_e2e.mjs)",
+      "Bash(git pull *)"
     ]
   }
 }

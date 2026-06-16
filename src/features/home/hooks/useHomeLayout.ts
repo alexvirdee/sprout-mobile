@@ -7,9 +7,10 @@
 import { create } from 'zustand';
 import * as SecureStore from 'expo-secure-store';
 
-export type HomeSectionKey = 'care' | 'attention' | 'health' | 'gardens' | 'activity';
+export type HomeSectionKey = 'upcoming' | 'care' | 'attention' | 'health' | 'gardens' | 'activity';
 
 export const HOME_SECTIONS: { key: HomeSectionKey; title: string }[] = [
+  { key: 'upcoming', title: 'Upcoming care' },
   { key: 'care', title: "Today's care" },
   { key: 'attention', title: 'Needs attention' },
   { key: 'health', title: 'Garden health' },
@@ -17,11 +18,18 @@ export const HOME_SECTIONS: { key: HomeSectionKey; title: string }[] = [
   { key: 'activity', title: 'Recent activity' },
 ];
 
-const DEFAULT_ORDER: HomeSectionKey[] = ['care', 'attention', 'health', 'gardens', 'activity'];
+const DEFAULT_ORDER: HomeSectionKey[] = ['upcoming', 'care', 'attention', 'health', 'gardens', 'activity'];
 const KEY = 'sprout.homeLayout';
 
 type BoolMap = Record<HomeSectionKey, boolean>;
-const emptyBool = (): BoolMap => ({ care: false, attention: false, health: false, gardens: false, activity: false });
+const emptyBool = (): BoolMap => ({
+  upcoming: false,
+  care: false,
+  attention: false,
+  health: false,
+  gardens: false,
+  activity: false,
+});
 
 interface HomeLayoutState {
   order: HomeSectionKey[];
