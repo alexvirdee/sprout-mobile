@@ -23,6 +23,7 @@ import {
 import { CareTaskActions } from '../components';
 import { recurrenceLabel, taskTypeMeta } from '../utils/careTaskLabels';
 import { dueLabel, dueTone } from '../utils/careTaskDates';
+import { confirmLogHarvest } from '@features/journal/utils/harvestPrompt';
 
 const DAY = 86_400_000;
 
@@ -37,7 +38,26 @@ export function CareTaskDetailScreen({ navigation, route }: GardensStackScreenPr
   const rescheduleM = useRescheduleCareTask();
   const deleteM = useDeleteCareTask();
 
-  const onComplete = () => completeM.mutate(id, { onSuccess: () => navigation.goBack() });
+  const onComplete = () =>
+    completeM.mutate(id, {
+      onSuccess: () => {
+        // Completing a harvesting task is the perfect moment to log the harvest.
+        if (task?.taskType === 'harvesting') {
+          confirmLogHarvest({
+            onLog: () =>
+              navigation.replace('AddJournalEntry', {
+                gardenId: task.gardenId,
+                plantId: task.plantId ?? undefined,
+                type: 'harvest',
+                careTaskId: task.id,
+              }),
+            onDismiss: () => navigation.goBack(),
+          });
+        } else {
+          navigation.goBack();
+        }
+      },
+    });
   const onSkip = () => skipM.mutate(id, { onSuccess: () => navigation.goBack() });
   const onReschedule = () => {
     const at = (days: number) => () => rescheduleM.mutate({ id, dueDate: new Date(Date.now() + days * DAY).toISOString() });

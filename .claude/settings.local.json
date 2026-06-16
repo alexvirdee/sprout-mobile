@@ -75,7 +75,22 @@
       "Bash(node -e \"console.log\\(require\\('expo-notifications/package.json'\\).version\\)\")",
       "Bash(node /tmp/garden_coords_e2e.mjs)",
       "Bash(node /tmp/undo_e2e.mjs)",
-      "Bash(git pull *)"
+      "Bash(git pull *)",
+      "Bash(git -C /Users/alexvirdee/Desktop/alexdev/react-native/sprout-mobile status --short)",
+      "Bash(git -C /Users/alexvirdee/Desktop/alexdev/react-native/sprout-mobile log --oneline -6)",
+      "Bash(git -C /Users/alexvirdee/Desktop/alexdev/react-native/sprout-server branch --show-current)",
+      "Bash(git -C /Users/alexvirdee/Desktop/alexdev/react-native/sprout-server status --short)",
+      "Bash(git -C /Users/alexvirdee/Desktop/alexdev/react-native/sprout-server log --oneline -6)",
+      "Bash(git -C /Users/alexvirdee/Desktop/alexdev/react-native/sprout-mobile checkout -b feat/sprout-ai-care-harvest-journal-and-polish)",
+      "Bash(git -C /Users/alexvirdee/Desktop/alexdev/react-native/sprout-server checkout -b feat/sprout-ai-care-harvest-journal-and-polish)",
+      "Bash(node -e \"const p=require\\('./package.json'\\); console.log\\(JSON.stringify\\(p.jest,null,2\\)\\)\")",
+      "Bash(sed -n '1,60p' src/__tests__/care.test.ts)",
+      "Bash(npx tsc *)",
+      "Bash(echo \"TSC_EXIT=$?\")",
+      "Bash(node -e \"try{const t=require\\('./src/theme/palette.ts'\\)}catch\\(e\\){}\")",
+      "Bash(echo \"files changed/added: $\\(git -C /Users/alexvirdee/Desktop/alexdev/react-native/sprout-mobile status --short)",
+      "Bash(git add *)",
+      "Bash(git commit *)"
     ]
   }
 }

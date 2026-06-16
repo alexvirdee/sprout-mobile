@@ -19,10 +19,15 @@ export interface CareTaskCardProps {
   onComplete?: () => void;
 }
 
-export function CareTaskCard({ task, onPress, onComplete }: CareTaskCardProps) {
+function CareTaskCardBase({ task, onPress, onComplete }: CareTaskCardProps) {
   const meta = taskTypeMeta(task.taskType);
   return (
-    <Card onPress={onPress} padding="sm" radius="lg">
+    <Card
+      onPress={onPress}
+      padding="sm"
+      radius="lg"
+      accessibilityLabel={`${task.title}, ${dueLabel(task.dueDate)}`}
+    >
       <View style={styles.row}>
         <View style={styles.chip}>
           <Emoji size={20}>{meta.emoji}</Emoji>
@@ -51,6 +56,9 @@ export function CareTaskCard({ task, onPress, onComplete }: CareTaskCardProps) {
     </Card>
   );
 }
+
+// List item — memoized to avoid re-rendering every row when a sibling changes.
+export const CareTaskCard = React.memo(CareTaskCardBase);
 
 const styles = StyleSheet.create({
   row: { flexDirection: 'row', alignItems: 'center', columnGap: 12 },

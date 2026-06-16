@@ -28,12 +28,18 @@ export interface GardenCardProps {
   onPress: () => void;
 }
 
-export function GardenCard({ garden, onPress }: GardenCardProps) {
+function GardenCardBase({ garden, onPress }: GardenCardProps) {
   const meta = gardenTypeMeta(garden.type);
   const accent = ACCENT_COLORS[meta.accent];
 
   return (
-    <Card onPress={onPress} padding="md" radius="lg" elevation="sm">
+    <Card
+      onPress={onPress}
+      padding="md"
+      radius="lg"
+      elevation="sm"
+      accessibilityLabel={`${garden.name}, ${meta.label}, ${garden.plantCount} plants`}
+    >
       <View style={styles.top}>
         <LinearGradient colors={accent.grad} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.disc}>
           <Emoji size={26}>{meta.emoji}</Emoji>
@@ -74,6 +80,9 @@ export function GardenCard({ garden, onPress }: GardenCardProps) {
     </Card>
   );
 }
+
+// List item — memoized so the gardens FlatList doesn't re-render every card.
+export const GardenCard = React.memo(GardenCardBase);
 
 const styles = StyleSheet.create({
   top: { flexDirection: 'row', alignItems: 'center', columnGap: 12 },

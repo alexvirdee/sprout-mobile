@@ -32,5 +32,9 @@ export const queryKeys = {
   careTasks: ['care-tasks'] as const,
   careTask: (id: string) => ['care-tasks', id] as const,
   careSuggestions: (plantId: string) => ['care-suggestions', plantId] as const,
+  journal: ['journal'] as const,
+  journalList: (params?: { gardenId?: string; plantId?: string; type?: string }) =>
+    ['journal', 'list', params ?? {}] as const,
+  journalEntry: (id: string) => ['journal', 'entry', id] as const,
   tasks: ['tasks'] as const,
 };

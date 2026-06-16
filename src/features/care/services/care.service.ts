@@ -4,7 +4,14 @@
  */
 
 import { apiClient } from '@services/apiClient';
-import { CareSuggestion, CareTask, CareTaskListParams, CareTaskPayload } from '../types/care.types';
+import {
+  AiCareSuggestionsResult,
+  CareSuggestion,
+  CareTask,
+  CareTaskListParams,
+  CareTaskPayload,
+  EnableCareInput,
+} from '../types/care.types';
 
 function toQuery(params?: CareTaskListParams): string {
   if (!params) return '';
@@ -42,8 +49,13 @@ export const careService = {
   suggestions: (plantId: string) =>
     apiClient.get<{ suggestions: CareSuggestion[] }>(`/plants/${plantId}/care-suggestions`).then((r) => r.suggestions),
 
-  enableSuggestions: (plantId: string, keys: string[]) =>
+  // AI-refined suggestions (tuned for variety/season). Falls back to the rules
+  // server-side, so aiUsed:false simply means "showing standard guidance".
+  aiSuggestions: (plantId: string) =>
+    apiClient.post<AiCareSuggestionsResult>(`/plants/${plantId}/ai-care-suggestions`),
+
+  enableSuggestions: (plantId: string, input: EnableCareInput) =>
     apiClient
-      .post<{ tasks: CareTask[] }>(`/plants/${plantId}/enable-care-suggestions`, { keys })
+      .post<{ tasks: CareTask[] }>(`/plants/${plantId}/enable-care-suggestions`, input)
       .then((r) => r.tasks),
 };
