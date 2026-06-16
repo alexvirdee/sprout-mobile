@@ -47,11 +47,6 @@ export function AppNavigator() {
         <Tab.Screen
           name="Garden"
           component={GardensNavigator}
-          listeners={({ navigation }) => ({
-            // Tapping the tab returns to its root, so a deep link from Home
-            // (e.g. a care task) never leaves the Garden tab stranded.
-            tabPress: () => navigation.navigate('Garden', { screen: 'GardensList' }),
-          })}
           options={({ route }) => {
             const focusedRoute = getFocusedRouteNameFromRoute(route) ?? 'GardensList';
             return {
@@ -63,9 +58,6 @@ export function AppNavigator() {
         <Tab.Screen
           name="Water"
           component={WateringNavigator}
-          listeners={({ navigation }) => ({
-            tabPress: () => navigation.navigate('Water', { screen: 'WateringHome' }),
-          })}
           options={({ route }) => {
             const focusedRoute = getFocusedRouteNameFromRoute(route) ?? 'WateringHome';
             return {
@@ -77,9 +69,6 @@ export function AppNavigator() {
         <Tab.Screen
           name="You"
           component={ProfileNavigator}
-          listeners={({ navigation }) => ({
-            tabPress: () => navigation.navigate('You', { screen: 'ProfileHome' }),
-          })}
           options={({ route }) => {
             const focusedRoute = getFocusedRouteNameFromRoute(route) ?? 'ProfileHome';
             return {
