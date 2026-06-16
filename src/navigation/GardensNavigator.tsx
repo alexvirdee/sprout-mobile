@@ -18,6 +18,9 @@ import { PlantDetailScreen } from '@features/plants/screens/PlantDetailScreen';
 import { EditPlantScreen } from '@features/plants/screens/EditPlantScreen';
 import { AIPlantScanScreen } from '@features/ai/screens/AIPlantScanScreen';
 import { AIPlantResultScreen } from '@features/ai/screens/AIPlantResultScreen';
+import { CareCalendarScreen } from '@features/care/screens/CareCalendarScreen';
+import { CareTaskDetailScreen } from '@features/care/screens/CareTaskDetailScreen';
+import { CareReminderSetupScreen } from '@features/care/screens/CareReminderSetupScreen';
 
 const Stack = createNativeStackNavigator<GardensStackParamList>();
 
@@ -35,6 +38,9 @@ export function GardensNavigator() {
       <Stack.Screen name="EditPlant" component={EditPlantScreen} options={{ animation: 'slide_from_bottom' }} />
       <Stack.Screen name="AIPlantScan" component={AIPlantScanScreen} options={{ animation: 'slide_from_bottom' }} />
       <Stack.Screen name="AIPlantResult" component={AIPlantResultScreen} />
+      <Stack.Screen name="CareCalendar" component={CareCalendarScreen} />
+      <Stack.Screen name="CareTaskDetail" component={CareTaskDetailScreen} />
+      <Stack.Screen name="CareReminderSetup" component={CareReminderSetupScreen} options={{ animation: 'slide_from_bottom' }} />
     </Stack.Navigator>
   );
 }

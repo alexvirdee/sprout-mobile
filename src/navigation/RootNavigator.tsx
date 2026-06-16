@@ -18,6 +18,7 @@ import { SplashScreen } from '@screens/SplashScreen';
 import { OnboardingScreen } from '@screens/onboarding/OnboardingScreen';
 import { AuthNavigator } from './AuthNavigator';
 import { AppNavigator } from './AppNavigator';
+import { navigationRef } from './navigationRef';
 
 const navTheme: NavTheme = {
   ...DefaultTheme,
@@ -48,7 +49,7 @@ export function RootNavigator() {
   const booting = status === 'loading' || !onboardingHydrated;
 
   return (
-    <NavigationContainer theme={navTheme}>
+    <NavigationContainer ref={navigationRef} theme={navTheme}>
       {booting ? (
         <SplashScreen />
       ) : !hasOnboarded ? (

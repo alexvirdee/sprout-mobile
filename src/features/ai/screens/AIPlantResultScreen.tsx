@@ -75,7 +75,8 @@ export function AIPlantResultScreen({ navigation, route }: GardensStackScreenPro
       aiIdentificationData: result as unknown as Record<string, unknown>,
     };
     create.mutate(payload, {
-      onSuccess: () => navigation.navigate('GardenDetail', { id: values.gardenId, flash: 'Added to your garden 🌱' }),
+      // After adding the scanned plant, offer to set up its care reminders.
+      onSuccess: (plant) => navigation.navigate('CareReminderSetup', { plantId: plant.id, gardenId: values.gardenId }),
     });
   };
 
