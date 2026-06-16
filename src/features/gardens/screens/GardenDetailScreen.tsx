@@ -39,6 +39,9 @@ import { usePlants } from '@features/plants/hooks/usePlants';
 import { PlantCard } from '@features/plants/components/PlantCard';
 import { PlantEmptyState } from '@features/plants/components/PlantEmptyState';
 import { QuickAddPlantModal } from '@features/plants/components/QuickAddPlantModal';
+import { useCareTasks } from '@features/care/hooks/useCareTasks';
+import { useCompleteCareTask } from '@features/care/hooks/useCareTaskActions';
+import { CareTaskList } from '@features/care/components';
 
 const PHASE_2 = [
   { emoji: '🛏️', label: 'Plant beds' },
@@ -55,6 +58,8 @@ export function GardenDetailScreen({ navigation, route }: GardensStackScreenProp
   const archive = useArchiveGarden();
   const plantsQuery = usePlants(id);
   const plants = plantsQuery.data ?? [];
+  const careTasks = useCareTasks({ status: 'pending', gardenId: id }).data ?? [];
+  const completeCare = useCompleteCareTask();
   const [quickAdd, setQuickAdd] = useState(false);
   const [flash, setFlash] = useState<string | undefined>(route.params?.flash);
 
@@ -208,14 +213,26 @@ export function GardenDetailScreen({ navigation, route }: GardensStackScreenProp
             )}
           </View>
 
-          {/* Today's care */}
+          {/* Care schedule */}
           <View style={styles.section}>
-            <SectionHeader title="Today's care" />
-            <Placeholder
-              emoji="💧"
-              title="No tasks yet"
-              body="Watering and care tasks for this garden will show up here."
+            <SectionHeader
+              title="Care schedule"
+              actionLabel={careTasks.length ? 'See all' : undefined}
+              onActionPress={careTasks.length ? () => navigation.navigate('CareCalendar', { gardenId: id }) : undefined}
             />
+            {careTasks.length === 0 ? (
+              <Placeholder
+                emoji="🗓️"
+                title="No reminders yet"
+                body="Enable care reminders on a plant and they'll show up here."
+              />
+            ) : (
+              <CareTaskList
+                tasks={careTasks.slice(0, 3)}
+                onPressTask={(t) => navigation.navigate('CareTaskDetail', { id: t.id })}
+                onComplete={(t) => completeCare.mutate(t.id)}
+              />
+            )}
           </View>
 
           {/* Seasonal notes */}

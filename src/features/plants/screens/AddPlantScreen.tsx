@@ -79,7 +79,8 @@ export function AddPlantScreen({ navigation, route }: GardensStackScreenProps<'A
 
   const onSubmit = (values: PlantFormValues) => {
     create.mutate(toPayload(values), {
-      onSuccess: () => navigation.navigate('GardenDetail', { id: values.gardenId, flash: 'Plant added 🌱' }),
+      // After adding a plant, offer to set up care reminders for it.
+      onSuccess: (plant) => navigation.navigate('CareReminderSetup', { plantId: plant.id, gardenId: values.gardenId }),
     });
   };
 
