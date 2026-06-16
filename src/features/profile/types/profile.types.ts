@@ -13,6 +13,8 @@ export interface ProfileStats {
   plants: number;
   wateringSessions: number;
   harvests: number;
+  /** Actual harvest events recorded in the journal. */
+  harvestLogs: number;
   tasksCompleted: number;
   currentStreak: number;
   longestStreak: number;

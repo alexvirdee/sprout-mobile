@@ -42,11 +42,11 @@ import { QuickAddPlantModal } from '@features/plants/components/QuickAddPlantMod
 import { useCareTasks } from '@features/care/hooks/useCareTasks';
 import { useCompleteCareTask } from '@features/care/hooks/useCareTaskActions';
 import { CareTaskList } from '@features/care/components';
+import { useJournal } from '@features/journal/hooks/useJournal';
+import { JournalTimeline } from '@features/journal/components';
 
 const PHASE_2 = [
   { emoji: '🛏️', label: 'Plant beds' },
-  { emoji: '🧺', label: 'Harvests' },
-  { emoji: '📸', label: 'Photos' },
   { emoji: '🌦️', label: 'Weather & frost' },
   { emoji: '✨', label: 'AI assistant' },
 ];
@@ -60,6 +60,7 @@ export function GardenDetailScreen({ navigation, route }: GardensStackScreenProp
   const plants = plantsQuery.data ?? [];
   const careTasks = useCareTasks({ status: 'pending', gardenId: id }).data ?? [];
   const completeCare = useCompleteCareTask();
+  const journalEntries = useJournal({ gardenId: id }).data ?? [];
   const [quickAdd, setQuickAdd] = useState(false);
   const [flash, setFlash] = useState<string | undefined>(route.params?.flash);
 
@@ -235,6 +236,40 @@ export function GardenDetailScreen({ navigation, route }: GardensStackScreenProp
             )}
           </View>
 
+          {/* Journal */}
+          <View style={styles.section}>
+            <SectionHeader
+              title="Journal"
+              actionLabel={journalEntries.length ? 'See all' : undefined}
+              onActionPress={journalEntries.length ? () => navigation.navigate('GardenJournal', { gardenId: id }) : undefined}
+            />
+            {journalEntries.length === 0 ? (
+              <Placeholder
+                emoji="🧺"
+                title="Start your garden's story"
+                body="Log a harvest, jot a note, or mark a milestone — with a photo if you like."
+                action={
+                  <Button
+                    label="Log a harvest"
+                    variant="secondary"
+                    onPress={() => navigation.navigate('AddJournalEntry', { gardenId: id })}
+                  />
+                }
+              />
+            ) : (
+              <>
+                <JournalTimeline entries={journalEntries.slice(0, 3)} />
+                <Button
+                  label="Add entry"
+                  variant="ghost"
+                  fullWidth
+                  onPress={() => navigation.navigate('AddJournalEntry', { gardenId: id })}
+                  style={styles.addJournalBtn}
+                />
+              </>
+            )}
+          </View>
+
           {/* Seasonal notes */}
           <View style={styles.section}>
             <SectionHeader title="Seasonal notes" />
@@ -373,6 +408,7 @@ const styles = StyleSheet.create({
   loc: { flexDirection: 'row', alignItems: 'center', columnGap: 5 },
 
   section: { marginTop: spacing.xl },
+  addJournalBtn: { marginTop: spacing.sm },
   plantList: { rowGap: spacing.base },
   overviewRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingVertical: 14 },
   sunValue: { flexDirection: 'row', alignItems: 'center', columnGap: 6 },

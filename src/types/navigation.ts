@@ -7,6 +7,7 @@ import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
 import type { CompositeScreenProps, NavigatorScreenParams } from '@react-navigation/native';
 import type { PlantIdentification } from '@features/ai/types/ai.types';
+import type { JournalEntryType } from '@features/journal/types/journal.types';
 
 export type AuthStackParamList = {
   SignIn: undefined;
@@ -44,6 +45,14 @@ export type GardensStackParamList = {
   CareCalendar: { gardenId?: string } | undefined;
   CareTaskDetail: { id: string };
   CareReminderSetup: { plantId: string; gardenId: string };
+  GardenJournal: { gardenId: string };
+  AddJournalEntry: {
+    gardenId: string;
+    plantId?: string;
+    type?: JournalEntryType;
+    careTaskId?: string;
+    prefillTitle?: string;
+  };
 };
 
 export type GardensStackScreenProps<T extends keyof GardensStackParamList> = CompositeScreenProps<
