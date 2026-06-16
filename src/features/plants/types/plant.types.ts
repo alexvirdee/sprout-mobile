@@ -8,7 +8,7 @@ import { colors, palette } from '@theme/index';
 export type PlantType =
   | 'vegetable' | 'herb' | 'fruit' | 'flower' | 'houseplant' | 'tree' | 'shrub' | 'succulent' | 'other';
 export type PlantSource =
-  | 'seed' | 'seedling' | 'transplant' | 'cutting' | 'store_bought' | 'other' | 'unknown';
+  | 'seed' | 'seedling' | 'transplant' | 'cutting' | 'store_bought' | 'ai_scan' | 'other' | 'unknown';
 export type SunPreference = 'full_sun' | 'partial_sun' | 'partial_shade' | 'full_shade' | 'not_sure';
 export type WateringPreference = 'light' | 'moderate' | 'frequent' | 'deep' | 'not_sure';
 export type PlantStatus = 'growing' | 'needs_attention' | 'harvested' | 'dormant' | 'archived';
@@ -27,6 +27,10 @@ export interface Plant {
   sunPreference: SunPreference;
   wateringPreference: WateringPreference;
   notes?: string;
+  scientificName?: string;
+  imageUrl?: string;
+  aiIdentified?: boolean;
+  identificationConfidence?: number;
   status: PlantStatus;
   lastWateredAt?: string | null;
   wateringCount?: number;
@@ -46,6 +50,11 @@ export interface PlantPayload {
   sunPreference: SunPreference;
   wateringPreference: WateringPreference;
   notes?: string;
+  scientificName?: string;
+  imageUrl?: string;
+  aiIdentified?: boolean;
+  identificationConfidence?: number;
+  aiIdentificationData?: Record<string, unknown>;
 }
 
 export interface PlantOption<T extends string> {

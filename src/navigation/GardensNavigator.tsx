@@ -16,6 +16,8 @@ import { EditGardenScreen } from '@features/gardens/screens/EditGardenScreen';
 import { AddPlantScreen } from '@features/plants/screens/AddPlantScreen';
 import { PlantDetailScreen } from '@features/plants/screens/PlantDetailScreen';
 import { EditPlantScreen } from '@features/plants/screens/EditPlantScreen';
+import { AIPlantScanScreen } from '@features/ai/screens/AIPlantScanScreen';
+import { AIPlantResultScreen } from '@features/ai/screens/AIPlantResultScreen';
 
 const Stack = createNativeStackNavigator<GardensStackParamList>();
 
@@ -31,6 +33,8 @@ export function GardensNavigator() {
       <Stack.Screen name="AddPlant" component={AddPlantScreen} options={{ animation: 'slide_from_bottom' }} />
       <Stack.Screen name="PlantDetail" component={PlantDetailScreen} />
       <Stack.Screen name="EditPlant" component={EditPlantScreen} options={{ animation: 'slide_from_bottom' }} />
+      <Stack.Screen name="AIPlantScan" component={AIPlantScanScreen} options={{ animation: 'slide_from_bottom' }} />
+      <Stack.Screen name="AIPlantResult" component={AIPlantResultScreen} />
     </Stack.Navigator>
   );
 }
