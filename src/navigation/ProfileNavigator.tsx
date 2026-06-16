@@ -20,6 +20,7 @@ const Stack = createNativeStackNavigator<ProfileStackParamList>();
 export function ProfileNavigator() {
   return (
     <Stack.Navigator
+      initialRouteName="ProfileHome"
       screenOptions={{ headerShown: false, contentStyle: { backgroundColor: colors.surface.page } }}
     >
       <Stack.Screen name="ProfileHome" component={ProfileScreen} />
