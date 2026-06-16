@@ -29,6 +29,7 @@ const Stack = createNativeStackNavigator<GardensStackParamList>();
 export function GardensNavigator() {
   return (
     <Stack.Navigator
+      initialRouteName="GardensList"
       screenOptions={{ headerShown: false, contentStyle: { backgroundColor: colors.surface.page } }}
     >
       <Stack.Screen name="GardensList" component={GardensScreen} />
