@@ -8,7 +8,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import { queryKeys } from '@services/queryClient';
 import { careService } from '../services/care.service';
-import { CareTask, CareTaskPayload } from '../types/care.types';
+import { CareTask, CareTaskPayload, EnableCareInput } from '../types/care.types';
 
 function useInvalidateCare() {
   const qc = useQueryClient();
@@ -67,8 +67,8 @@ export function useDeleteCareTask() {
 
 export function useEnableCareSuggestions(plantId: string) {
   const invalidate = useInvalidateCare();
-  return useMutation<CareTask[], Error, string[]>({
-    mutationFn: (keys) => careService.enableSuggestions(plantId, keys),
+  return useMutation<CareTask[], Error, EnableCareInput>({
+    mutationFn: (input) => careService.enableSuggestions(plantId, input),
     onSuccess: invalidate,
   });
 }

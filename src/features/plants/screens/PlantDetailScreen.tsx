@@ -25,11 +25,12 @@ import { daysSincePlanted } from '../utils/plantDates';
 import { useCareTasks } from '@features/care/hooks/useCareTasks';
 import { useCompleteCareTask } from '@features/care/hooks/useCareTaskActions';
 import { CareTaskList } from '@features/care/components';
+import { useJournal } from '@features/journal/hooks/useJournal';
+import { JournalTimeline } from '@features/journal/components';
 
 const FUTURE = [
   { emoji: '💧', label: 'Watering history' },
-  { emoji: '📸', label: 'Growth photos' },
-  { emoji: '🧺', label: 'Harvests' },
+  { emoji: '📈', label: 'Growth tracking' },
 ];
 
 export function PlantDetailScreen({ navigation, route }: GardensStackScreenProps<'PlantDetail'>) {
@@ -41,6 +42,7 @@ export function PlantDetailScreen({ navigation, route }: GardensStackScreenProps
   const gardenName = plant ? gardens.find((g) => g.id === plant.gardenId)?.name ?? '' : '';
   const careTasks = useCareTasks({ status: 'pending', plantId: id }).data ?? [];
   const completeCare = useCompleteCareTask();
+  const journalEntries = useJournal({ plantId: id }).data ?? [];
 
   const [flash, setFlash] = useState<string | undefined>(route.params?.flash);
   useEffect(() => {
@@ -193,6 +195,39 @@ export function PlantDetailScreen({ navigation, route }: GardensStackScreenProps
                 )}
               </View>
 
+              {/* Harvests & notes */}
+              <View style={styles.section}>
+                <SectionHeader
+                  title="Harvests & notes"
+                  actionLabel={journalEntries.length ? 'See all' : undefined}
+                  onActionPress={journalEntries.length ? () => navigation.navigate('GardenJournal', { gardenId: plant.gardenId }) : undefined}
+                />
+                {journalEntries.length === 0 ? (
+                  <Card padding="md" radius="lg">
+                    <Text variant="bodySmall" color="muted">
+                      Log harvests, notes, and milestones for {plant.name} — with a photo if you like.
+                    </Text>
+                    <Button
+                      label="Log a harvest"
+                      variant="secondary"
+                      onPress={() => navigation.navigate('AddJournalEntry', { gardenId: plant.gardenId, plantId: plant.id, type: 'harvest' })}
+                      style={styles.careCta}
+                    />
+                  </Card>
+                ) : (
+                  <>
+                    <JournalTimeline entries={journalEntries.slice(0, 3)} />
+                    <Button
+                      label="Add entry"
+                      variant="ghost"
+                      fullWidth
+                      onPress={() => navigation.navigate('AddJournalEntry', { gardenId: plant.gardenId, plantId: plant.id })}
+                      style={styles.addJournalBtn}
+                    />
+                  </>
+                )}
+              </View>
+
               {/* Future */}
               <View style={styles.section}>
                 <SectionHeader title="Coming soon" />
@@ -285,4 +320,5 @@ const styles = StyleSheet.create({
   },
   actions: { marginTop: spacing['2xl'], rowGap: spacing.sm },
   careCta: { marginTop: spacing.base, alignSelf: 'flex-start' },
+  addJournalBtn: { marginTop: spacing.sm },
 });
