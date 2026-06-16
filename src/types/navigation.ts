@@ -6,6 +6,7 @@
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
 import type { CompositeScreenProps, NavigatorScreenParams } from '@react-navigation/native';
+import type { PlantIdentification } from '@features/ai/types/ai.types';
 
 export type AuthStackParamList = {
   SignIn: undefined;
@@ -38,6 +39,8 @@ export type GardensStackParamList = {
   AddPlant: { gardenId?: string; name?: string } | undefined;
   PlantDetail: { id: string; flash?: string };
   EditPlant: { id: string };
+  AIPlantScan: undefined;
+  AIPlantResult: { imageUri: string; result: PlantIdentification };
 };
 
 export type GardensStackScreenProps<T extends keyof GardensStackParamList> = CompositeScreenProps<

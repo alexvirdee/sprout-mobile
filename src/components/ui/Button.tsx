@@ -98,6 +98,9 @@ export function Button({
     ...(variant === 'primary' ? shadows.brand : {}),
     ...(variant === 'gold' ? shadows.gold : {}),
     ...(variant === 'secondary' ? shadows.xs : {}),
+    // Honor a caller-supplied style (margins, alignSelf, etc.) — applied last so
+    // it can override the computed defaults.
+    ...style,
   });
 
   return (

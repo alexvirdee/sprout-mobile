@@ -1,5 +1,5 @@
 /**
- * Recommendation logic — the rules behind the Home weather tip + "today's care"
+ * Recommendation logic — the Home weather tip + actionable "today's care"
  * suggestions. Pure functions, tested directly.
  */
 
@@ -47,29 +47,47 @@ describe('weatherRecommendation', () => {
 });
 
 describe('buildCareSuggestions', () => {
+  const base = { totalWaterings: 5, gardensNeedingWater: [] as { id: string; name: string }[] };
+
   it('prompts to create a garden when there are none', () => {
-    const items = buildCareSuggestions({ gardenCount: 0, totalPlants: 0, weather: null });
+    const items = buildCareSuggestions({ gardenCount: 0, totalPlants: 0, weather: null, ...base });
     expect(items).toHaveLength(1);
-    expect(items[0].text).toMatch(/create a garden/i);
+    expect(items[0].action).toBe('create-garden');
   });
   it('suggests adding a plant when a garden has none', () => {
-    const items = buildCareSuggestions({ gardenCount: 1, totalPlants: 0, weather: makeWeather() });
-    expect(items.some((i) => /first plant/i.test(i.text))).toBe(true);
+    const items = buildCareSuggestions({ gardenCount: 1, totalPlants: 0, weather: makeWeather(), ...base });
+    expect(items.some((i) => i.action === 'add-plant')).toBe(true);
   });
-  it('suggests skipping watering when rain is likely', () => {
-    const items = buildCareSuggestions({ gardenCount: 1, totalPlants: 3, weather: makeWeather({ precipitationProbability: 80 }) });
-    expect(items.some((i) => /skip watering/i.test(i.text))).toBe(true);
+  it('surfaces a garden that needs water', () => {
+    const items = buildCareSuggestions({
+      gardenCount: 1,
+      totalPlants: 3,
+      weather: makeWeather(),
+      totalWaterings: 5,
+      gardensNeedingWater: [{ id: 'g1', name: 'Backyard' }],
+    });
+    expect(items.some((i) => i.action === 'water' && /backyard/i.test(i.title))).toBe(true);
   });
-  it('suggests checking thirsty plants on a hot day', () => {
-    const items = buildCareSuggestions({ gardenCount: 1, totalPlants: 3, weather: makeWeather({ high: 95, precipitationProbability: 0 }) });
-    expect(items.some((i) => /thirsty/i.test(i.text))).toBe(true);
+  it('flags hot weather as a care item', () => {
+    const items = buildCareSuggestions({
+      gardenCount: 1,
+      totalPlants: 3,
+      weather: makeWeather({ high: 95, precipitationProbability: 0 }),
+      totalWaterings: 5,
+      gardensNeedingWater: [],
+    });
+    expect(items.some((i) => /hot/i.test(i.title))).toBe(true);
   });
-  it('always includes a review suggestion when gardens exist', () => {
-    const items = buildCareSuggestions({ gardenCount: 2, totalPlants: 5, weather: makeWeather() });
-    expect(items.some((i) => /review your gardens/i.test(i.text))).toBe(true);
+  it('prompts to start watering when there is no history', () => {
+    const items = buildCareSuggestions({ gardenCount: 1, totalPlants: 2, weather: makeWeather(), totalWaterings: 0, gardensNeedingWater: [] });
+    expect(items.some((i) => /start watering/i.test(i.title))).toBe(true);
+  });
+  it('always offers a scan suggestion when gardens exist', () => {
+    const items = buildCareSuggestions({ gardenCount: 2, totalPlants: 5, weather: makeWeather(), totalWaterings: 5, gardensNeedingWater: [] });
+    expect(items.some((i) => i.action === 'scan')).toBe(true);
   });
   it('does not nag about plants when plants already exist', () => {
-    const items = buildCareSuggestions({ gardenCount: 1, totalPlants: 4, weather: makeWeather() });
-    expect(items.some((i) => /first plant/i.test(i.text))).toBe(false);
+    const items = buildCareSuggestions({ gardenCount: 1, totalPlants: 4, weather: makeWeather(), totalWaterings: 5, gardensNeedingWater: [] });
+    expect(items.some((i) => i.action === 'add-plant')).toBe(false);
   });
 });

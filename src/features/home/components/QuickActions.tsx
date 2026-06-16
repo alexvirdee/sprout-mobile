@@ -1,28 +1,28 @@
 /**
- * QuickActions — playful 2×2 grid of common actions. Add garden, add plant, and
- * water are wired to their destinations; "Add note" is a Phase-2 placeholder.
+ * QuickActions — a touch-friendly 2×2 grid of the most common next steps, sitting
+ * right under the weather. One tap each. Matches the Sprout card aesthetic.
  */
 
 import React from 'react';
-import { Pressable, StyleSheet, View } from 'react-native';
-import { Droplets, Pencil, Plus, Sprout } from 'lucide-react-native';
+import { Pressable, StyleSheet, View, ViewStyle } from 'react-native';
+import { Camera, Droplets, Plus, Sprout } from 'lucide-react-native';
 
 import { SectionHeader, Text } from '@components/index';
 import { colors, palette, radii, shadows } from '@theme/index';
 
 export interface QuickActionsProps {
-  onAddGarden: () => void;
+  onScan: () => void;
   onAddPlant: () => void;
   onWater: () => void;
-  onComingSoon: (label: string) => void;
+  onCreateGarden: () => void;
 }
 
-export function QuickActions({ onAddGarden, onAddPlant, onWater, onComingSoon }: QuickActionsProps) {
+export function QuickActions({ onScan, onAddPlant, onWater, onCreateGarden }: QuickActionsProps) {
   const actions = [
-    { key: 'garden', label: 'Add garden', icon: <Plus size={20} color={palette.green[700]} />, soft: palette.green[50], onPress: onAddGarden },
-    { key: 'plant', label: 'Add plant', icon: <Sprout size={20} color={palette.sageScale[700]} />, soft: palette.sageScale[50], onPress: onAddPlant },
-    { key: 'water', label: 'Water', icon: <Droplets size={20} color={palette.terra[600]} />, soft: palette.terra[50], onPress: onWater },
-    { key: 'note', label: 'Add note', icon: <Pencil size={20} color={palette.gold[700]} />, soft: palette.gold[50], onPress: () => onComingSoon('Notes') },
+    { key: 'scan', label: 'Scan Plant', icon: <Camera size={20} color={palette.green[700]} />, soft: palette.green[50], onPress: onScan },
+    { key: 'plant', label: 'Add Plant', icon: <Sprout size={20} color={palette.sageScale[700]} />, soft: palette.sageScale[50], onPress: onAddPlant },
+    { key: 'water', label: 'Water Garden', icon: <Droplets size={20} color={colors.status.info} />, soft: colors.status.infoSoft, onPress: onWater },
+    { key: 'garden', label: 'New Garden', icon: <Plus size={20} color={palette.gold[700]} />, soft: palette.gold[50], onPress: onCreateGarden },
   ];
 
   return (
@@ -35,10 +35,16 @@ export function QuickActions({ onAddGarden, onAddPlant, onWater, onComingSoon }:
             accessibilityRole="button"
             accessibilityLabel={a.label}
             onPress={a.onPress}
-            style={({ pressed }) => [styles.action, pressed && styles.pressed]}
+            style={({ pressed }): ViewStyle => ({
+              ...styles.action,
+              ...(pressed ? styles.pressed : {}),
+              transform: [{ scale: pressed ? 0.97 : 1 }],
+            })}
           >
             <View style={[styles.chip, { backgroundColor: a.soft }]}>{a.icon}</View>
-            <Text variant="label" color="strong">{a.label}</Text>
+            <Text variant="label" color="strong">
+              {a.label}
+            </Text>
           </Pressable>
         ))}
       </View>
@@ -55,7 +61,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     columnGap: 12,
     paddingHorizontal: 14,
-    paddingVertical: 14,
+    paddingVertical: 16,
     backgroundColor: colors.surface.card,
     borderWidth: 1,
     borderColor: colors.border.soft,
@@ -63,5 +69,5 @@ const styles = StyleSheet.create({
     ...shadows.sm,
   },
   pressed: { backgroundColor: colors.surface.sunken },
-  chip: { width: 38, height: 38, borderRadius: radii.md, alignItems: 'center', justifyContent: 'center' },
+  chip: { width: 40, height: 40, borderRadius: radii.md, alignItems: 'center', justifyContent: 'center' },
 });
