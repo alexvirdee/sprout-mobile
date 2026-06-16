@@ -21,7 +21,7 @@ export interface PlantCardProps {
   gardenName?: string;
 }
 
-export function PlantCard({ plant, onPress, gardenName }: PlantCardProps) {
+function PlantCardBase({ plant, onPress, gardenName }: PlantCardProps) {
   const meta = plantTypeMeta(plant.type);
   const accent = ACCENT_COLORS[meta.accent];
   const status = statusMeta(plant.status);
@@ -29,7 +29,12 @@ export function PlantCard({ plant, onPress, gardenName }: PlantCardProps) {
   const subtitle = [plant.variety, meta.label].filter(Boolean).join(' · ');
 
   return (
-    <Card onPress={onPress} padding="sm" radius="lg">
+    <Card
+      onPress={onPress}
+      padding="sm"
+      radius="lg"
+      accessibilityLabel={`${plant.name}, ${meta.label}, ${status.label}`}
+    >
       <View style={styles.row}>
         <LinearGradient colors={accent.grad} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.disc}>
           <Emoji size={22}>{meta.emoji}</Emoji>
@@ -52,6 +57,9 @@ export function PlantCard({ plant, onPress, gardenName }: PlantCardProps) {
     </Card>
   );
 }
+
+// List item — memoized so plant lists don't re-render every row needlessly.
+export const PlantCard = React.memo(PlantCardBase);
 
 const styles = StyleSheet.create({
   row: { flexDirection: 'row', alignItems: 'center', columnGap: 12 },

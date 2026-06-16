@@ -59,7 +59,12 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
   bootstrap: async () => {
     // Sign the session out cleanly if a token turns out to be invalid/expired.
-    setUnauthorizedHandler(() => set({ status: 'unauthenticated', user: null, token: null, isDemo: false }));
+    // Demo mode has no token, so its API calls naturally 401 — ignore those so
+    // exploring the demo never bounces the user back to sign-in.
+    setUnauthorizedHandler(() => {
+      if (get().isDemo) return;
+      set({ status: 'unauthenticated', user: null, token: null, isDemo: false });
+    });
 
     try {
       const token = await getToken();

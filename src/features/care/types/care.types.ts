@@ -64,3 +64,22 @@ export interface CareTaskListParams {
   plantId?: string;
   status?: CareStatus | 'all';
 }
+
+/** Result of asking the server to AI-refine a plant's care suggestions. */
+export interface AiCareSuggestionsResult {
+  suggestions: CareSuggestion[];
+  /** false when AI is unavailable and the rules were returned as-is. */
+  aiUsed: boolean;
+}
+
+/**
+ * Enabling suggestions as tasks. Pass `keys` for rules-based suggestions (the
+ * server re-derives them), or full `suggestions` bodies for AI-refined ones
+ * (whose tuned values can't be re-derived). `source` defaults to 'ai' when
+ * suggestions are sent.
+ */
+export interface EnableCareInput {
+  keys?: string[];
+  suggestions?: CareSuggestion[];
+  source?: 'system' | 'ai';
+}
