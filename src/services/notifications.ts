@@ -73,6 +73,22 @@ export async function scheduleDailyNotification({ hour, minute, title, body, typ
   });
 }
 
+interface DateOptions {
+  date: Date;
+  title: string;
+  body: string;
+  type: string;
+  data?: Record<string, unknown>;
+}
+
+/** Schedule a one-off notification at a specific date/time (e.g. a care reminder). */
+export async function scheduleDateNotification({ date, title, body, type, data }: DateOptions): Promise<void> {
+  await Notifications.scheduleNotificationAsync({
+    content: { title, body, data: { type, ...(data ?? {}) } },
+    trigger: { type: Notifications.SchedulableTriggerInputTypes.DATE, date },
+  });
+}
+
 /** Fire a notification right now (used for "send a test reminder"). */
 export async function presentNotificationNow(title: string, body: string): Promise<void> {
   await Notifications.scheduleNotificationAsync({

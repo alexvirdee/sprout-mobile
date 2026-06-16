@@ -9,6 +9,7 @@ import { useGardens } from '@features/gardens/hooks/useGardens';
 import { usePlants } from '@features/plants/hooks/usePlants';
 import { useWatering } from '@features/watering/hooks/useWatering';
 import { useWateringStats } from '@features/watering/hooks/useWateringStats';
+import { useCareTasks } from '@features/care/hooks/useCareTasks';
 import { useCurrentWeather } from '@features/weather/hooks/useCurrentWeather';
 import { useDeviceLocation } from '@features/weather/hooks/useDeviceLocation';
 import { daysSinceWatered } from '@features/watering/utils/hydrationStatus';
@@ -23,10 +24,12 @@ export function useHomeDashboard() {
   const plantsQuery = usePlants();
   const recentQuery = useWatering();
   const statsQuery = useWateringStats();
+  const careQuery = useCareTasks({ status: 'pending' });
 
   const gardens = gardensQuery.data ?? [];
   const plants = plantsQuery.data ?? [];
   const logs = recentQuery.data ?? [];
+  const careTasks = careQuery.data ?? [];
   const w = weather.data ?? null;
 
   const totalGardens = gardens.length;
@@ -60,6 +63,7 @@ export function useHomeDashboard() {
     void plantsQuery.refetch();
     void recentQuery.refetch();
     void statsQuery.refetch();
+    void careQuery.refetch();
     if (coords) void weather.refetch();
   };
 
@@ -76,6 +80,7 @@ export function useHomeDashboard() {
     attention,
     health,
     activity,
+    careTasks,
     stats: statsQuery.data,
     gardensQuery,
     refresh,
@@ -84,6 +89,7 @@ export function useHomeDashboard() {
       plantsQuery.isRefetching ||
       recentQuery.isRefetching ||
       statsQuery.isRefetching ||
+      careQuery.isRefetching ||
       weather.isRefetching,
   };
 }
