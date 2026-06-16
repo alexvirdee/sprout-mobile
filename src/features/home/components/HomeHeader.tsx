@@ -51,7 +51,8 @@ export function HomeHeader({ name, avatar, topInset }: HomeHeaderProps) {
 }
 
 const styles = StyleSheet.create({
-  header: { paddingHorizontal: gutter, paddingBottom: spacing.lg },
+  // Tighter bottom padding so the weather card feels connected to the greeting.
+  header: { paddingHorizontal: gutter, paddingBottom: spacing.md },
   row: { flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between', columnGap: spacing.md },
   flex: { flex: 1 },
   greeting: { marginTop: 4 },

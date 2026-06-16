@@ -1,49 +1,59 @@
 /**
- * TodayCareCard — a playful checklist-style card of the day's care suggestions
- * (rules-based, derived from gardens + weather).
+ * TodayCareCard — the day's actionable care suggestions. Each row has an icon,
+ * a title + short explanation, and a one-tap action button. Headerless — the
+ * section title/chevron is provided by CollapsibleSection on Home.
  */
 
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
 
-import { Card, Emoji, SectionHeader, Text } from '@components/index';
+import { Button, Card, Emoji, Text } from '@components/index';
 import { colors, radii } from '@theme/index';
 import { CareItem } from '../utils/homeRecommendations';
 
 export interface TodayCareCardProps {
   items: CareItem[];
+  onAction: (item: CareItem) => void;
 }
 
-export function TodayCareCard({ items }: TodayCareCardProps) {
+export function TodayCareCard({ items, onAction }: TodayCareCardProps) {
+  if (items.length === 0) return null;
+
   return (
-    <View>
-      <SectionHeader title="Today's care" />
-      <Card padding="md" radius="lg">
-        <View style={styles.list}>
-          {items.map((item) => (
-            <View key={item.id} style={styles.row}>
-              <View style={styles.bullet}>
-                <Emoji size={16}>{item.emoji}</Emoji>
-              </View>
-              <Text variant="body" color="body" style={styles.text}>{item.text}</Text>
+    <Card padding="none" radius="lg" elevation="sm">
+      {items.map((item, i) => (
+        <View key={item.id}>
+          {i > 0 ? <View style={styles.divider} /> : null}
+          <View style={styles.row}>
+            <View style={styles.bullet}>
+              <Emoji size={18}>{item.emoji}</Emoji>
             </View>
-          ))}
+            <View style={styles.text}>
+              <Text variant="title" color="strong">
+                {item.title}
+              </Text>
+              <Text variant="caption" color="muted">
+                {item.detail}
+              </Text>
+            </View>
+            <Button label={item.actionLabel} size="sm" variant="secondary" onPress={() => onAction(item)} />
+          </View>
         </View>
-      </Card>
-    </View>
+      ))}
+    </Card>
   );
 }
 
 const styles = StyleSheet.create({
-  list: { rowGap: 14 },
-  row: { flexDirection: 'row', alignItems: 'center', columnGap: 12 },
+  row: { flexDirection: 'row', alignItems: 'center', columnGap: 12, padding: 14 },
+  divider: { height: 1, backgroundColor: colors.border.soft, marginLeft: 56 },
   bullet: {
-    width: 30,
-    height: 30,
-    borderRadius: radii.sm,
+    width: 34,
+    height: 34,
+    borderRadius: radii.md,
     backgroundColor: colors.surface.sunken,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  text: { flex: 1 },
+  text: { flex: 1, rowGap: 2 },
 });

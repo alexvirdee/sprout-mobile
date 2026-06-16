@@ -1,52 +1,181 @@
 /**
- * homeRecommendations — rules-based "Today's care" suggestions and a "garden
- * mood" label, derived from the user's gardens + current weather. Pure and
- * ordered by priority so it's easy to read and unit-test. (Not a task engine.)
+ * homeRecommendations — rules-based "what should I do next?" logic for Home:
+ * actionable care suggestions + a "needs attention" list, derived from gardens,
+ * plants, and weather. Pure, ordered by priority, and unit-testable. Not a task
+ * engine — just calm guidance.
  */
 
+import type { BadgeTone } from '@components/index';
 import type { CurrentWeather } from '@features/weather/types/weather.types';
 import type { Garden } from '@features/gardens/types/garden.types';
+import type { Plant } from '@features/plants/types/plant.types';
 import { HOT_THRESHOLD, RAIN_THRESHOLD, WIND_THRESHOLD } from '@features/weather/utils/weatherRecommendations';
+import { daysSinceWatered, lastWateredLabel } from '@features/watering/utils/hydrationStatus';
+
+/** What an action button on a care item should do. The screen maps these to nav. */
+export type CareAction = 'create-garden' | 'add-plant' | 'water' | 'scan' | 'review';
 
 export interface CareItem {
   id: string;
   emoji: string;
-  text: string;
+  title: string;
+  detail: string;
+  actionLabel: string;
+  action: CareAction;
+  gardenId?: string;
 }
 
 export interface CareInput {
   gardenCount: number;
   totalPlants: number;
+  totalWaterings: number;
+  gardensNeedingWater: { id: string; name: string }[];
   weather: CurrentWeather | null;
 }
 
-export function buildCareSuggestions({ gardenCount, totalPlants, weather }: CareInput): CareItem[] {
+export function buildCareSuggestions({
+  gardenCount,
+  totalPlants,
+  totalWaterings,
+  gardensNeedingWater,
+  weather,
+}: CareInput): CareItem[] {
   if (gardenCount === 0) {
-    return [{ id: 'create', emoji: '🌱', text: 'Create a garden to start tracking your growing space.' }];
+    return [
+      {
+        id: 'create',
+        emoji: '🌱',
+        title: 'Create your first garden',
+        detail: 'Set up a growing space and Sprout’s tips become personal.',
+        actionLabel: 'Create',
+        action: 'create-garden',
+      },
+    ];
   }
 
   const items: CareItem[] = [];
 
   if (totalPlants === 0) {
-    items.push({ id: 'add-plant', emoji: '🪴', text: 'Add your first plant to make care tips more useful.' });
+    items.push({
+      id: 'add-plant',
+      emoji: '🪴',
+      title: 'Add your first plant',
+      detail: 'Tell Sprout what you’re growing for more useful care.',
+      actionLabel: 'Add Plant',
+      action: 'add-plant',
+    });
+  }
+
+  for (const g of gardensNeedingWater.slice(0, 2)) {
+    items.push({
+      id: `water-${g.id}`,
+      emoji: '💧',
+      title: `Water ${g.name}`,
+      detail: 'It hasn’t had a drink in a few days.',
+      actionLabel: 'Water',
+      action: 'water',
+      gardenId: g.id,
+    });
   }
 
   if (weather) {
     if (weather.precipitationProbability >= RAIN_THRESHOLD) {
-      items.push({ id: 'rain', emoji: '☔️', text: 'Skip watering if the rain arrives today.' });
+      items.push({
+        id: 'rain',
+        emoji: '🌧️',
+        title: 'Rain likely later today',
+        detail: 'Check the soil before watering — it may not need it.',
+        actionLabel: 'Open Water',
+        action: 'water',
+      });
     } else if (weather.high >= HOT_THRESHOLD) {
-      items.push({ id: 'hot', emoji: '🔥', text: 'Check thirsty containers and herbs in the heat.' });
+      items.push({
+        id: 'hot',
+        emoji: '🔥',
+        title: 'Hot afternoon ahead',
+        detail: 'Water early and check containers in the heat.',
+        actionLabel: 'Water',
+        action: 'water',
+      });
     } else if (weather.windSpeed >= WIND_THRESHOLD) {
-      items.push({ id: 'wind', emoji: '🌬️', text: 'Shelter young seedlings from the wind.' });
+      items.push({
+        id: 'wind',
+        emoji: '🌬️',
+        title: 'Windy conditions',
+        detail: 'Shelter young seedlings from the wind today.',
+        actionLabel: 'Open Garden',
+        action: 'review',
+      });
     }
   }
 
-  items.push({ id: 'review', emoji: '📝', text: 'Review your gardens and note anything new today.' });
+  if (totalPlants > 0 && totalWaterings === 0) {
+    items.push({
+      id: 'start-water',
+      emoji: '💧',
+      title: 'Start watering tracking',
+      detail: 'Log your first watering to build a healthy streak.',
+      actionLabel: 'Water',
+      action: 'water',
+    });
+  }
 
-  return items.slice(0, 3);
+  items.push({
+    id: 'scan',
+    emoji: '📸',
+    title: 'Identify a plant',
+    detail: 'Snap a photo and Sprout will help identify it.',
+    actionLabel: 'Scan',
+    action: 'scan',
+  });
+
+  return items.slice(0, 4);
 }
 
-/** A short "garden mood" label for the overview badge. */
+export interface AttentionItem {
+  id: string;
+  kind: 'garden' | 'plant';
+  emoji: string;
+  title: string;
+  detail: string;
+  tone: BadgeTone;
+  gardenId: string;
+}
+
+/** Gardens not watered in a while + plants flagged / overdue. Empty = all healthy. */
+export function buildNeedsAttention(gardens: Garden[], plants: Plant[]): AttentionItem[] {
+  const items: AttentionItem[] = [];
+
+  for (const g of gardens) {
+    const days = daysSinceWatered(g.lastWateredAt);
+    if (days != null && days >= 3) {
+      items.push({
+        id: `g-${g.id}`,
+        kind: 'garden',
+        emoji: '💧',
+        title: g.name,
+        detail: lastWateredLabel(g.lastWateredAt),
+        tone: days >= 5 ? 'warning' : 'gold',
+        gardenId: g.id,
+      });
+    }
+  }
+
+  for (const p of plants) {
+    if (p.status === 'needs_attention') {
+      items.push({ id: `p-${p.id}`, kind: 'plant', emoji: '🌿', title: p.name, detail: 'Needs attention', tone: 'gold', gardenId: p.gardenId });
+      continue;
+    }
+    const days = daysSinceWatered(p.lastWateredAt);
+    if (days != null && days >= 5) {
+      items.push({ id: `p-${p.id}`, kind: 'plant', emoji: '🌿', title: p.name, detail: 'Watering overdue', tone: 'warning', gardenId: p.gardenId });
+    }
+  }
+
+  return items.slice(0, 5);
+}
+
+/** A short "garden mood" label (kept for badges / summaries). */
 export function gardenMood(gardens: Pick<Garden, 'healthStatus'>[], weather: CurrentWeather | null): string {
   if (gardens.length === 0) return 'Getting started';
   if (weather && weather.precipitationProbability >= RAIN_THRESHOLD) return 'Rain helped today';
