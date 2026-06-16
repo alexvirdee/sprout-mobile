@@ -18,6 +18,7 @@ const Stack = createNativeStackNavigator<WateringStackParamList>();
 export function WateringNavigator() {
   return (
     <Stack.Navigator
+      initialRouteName="WateringHome"
       screenOptions={{ headerShown: false, contentStyle: { backgroundColor: colors.surface.page } }}
     >
       <Stack.Screen name="WateringHome" component={WateringScreen} />
